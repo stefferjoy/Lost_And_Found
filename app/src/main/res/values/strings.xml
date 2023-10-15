@@ -1,0 +1,26 @@
+<resources>
+    <string name="app_name">Lost&amp;Found</string>
+    <string name="edit_description">Edit description</string>
+    <string name="item_description">Item description</string>
+    <string name="post_item">Post Item</string>
+    <string name="lost_item">Lost Item</string>
+    <string name="login">Next ></string>
+    <string name="email">Enter you email</string>
+    <string name="password">Password</string>
+    <string name="register">Register</string>
+    <string name="click_to_login">Login Here</string>
+    <string name="click_to_register">Click to Register</string>
+    <string name="logout">Logout</string>
+    <string name="welcome_back">Welcome back</string>
+    <string name="sign_in_to_access_your_account">sign in to access your account</string>
+    <string name="new_member">New Member ?</string>
+    <string name="login_here">Login Here</string>
+    <string name="already_a_member">Already a member ?</string>
+    <string name="confirm_password">Confirm Password</string>
+    <string name="app_logo_description"><![CDATA[Lost&Found]]></string>
+    <string name="my_account">Profile </string>
+    <string name="discover">Discover</string>
+    <string name="navigation_tabs">Navigation Tabs</string>
+    <string name="post">Post\n</string>
+    <string name="tabs_for_navigating_content">Tabs for navigating content</string>
+</resources>

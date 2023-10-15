@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<transition xmlns:android="http://schemas.android.com/apk/res/android"
+    android:duration="2000"> <!-- 2000 milliseconds = 2 seconds -->
+    <item android:drawable="@color/bluebutton" />
+    <item android:drawable="@color/purple_500" />
+</transition>
