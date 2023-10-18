@@ -58,12 +58,14 @@ public class DiscoverFragment extends Fragment {
                             itemList.add(item);
                         }
                         // Update your RecyclerView adapter here
+                        recyclerView.getAdapter().notifyDataSetChanged(); // Notify the adapter of the data change
                     } else {
                         // Handle the error
                         Log.d(TAG, "Error getting documents: ", task.getException());
                     }
                 });
     }
+
 
 
 }

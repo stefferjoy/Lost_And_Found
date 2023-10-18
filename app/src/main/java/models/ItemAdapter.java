@@ -22,7 +22,6 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemViewHolder
         this.itemList = itemList;
     }
 
-
     @NonNull
     @Override
     public ItemViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -34,18 +33,13 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemViewHolder
     public void onBindViewHolder(@NonNull ItemViewHolder holder, int position) {
         LostAndFoundItem currentItem = itemList.get(position);
 
+        // Set the values of your views
         holder.textViewName.setText(currentItem.getItemName());
         holder.textViewDescription.setText(currentItem.getDescription());
         holder.textViewLocation.setText(currentItem.getLocation());
         holder.textViewDate.setText(currentItem.getDate());
-
-        // Display the userId
         holder.textViewUserId.setText("User ID: " + currentItem.getUserId());
-
-
-        if (currentItem.getImagePath() != null) {
-            Picasso.get().load(currentItem.getImagePath()).into(holder.imageViewItem);
-        }
+        Picasso.get().load(currentItem.getImagePath()).into(holder.imageViewItem);
     }
 
     @Override
@@ -63,8 +57,8 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemViewHolder
             textViewDescription = itemView.findViewById(R.id.textViewItemDescription);
             textViewLocation = itemView.findViewById(R.id.textViewItemLocation);
             textViewDate = itemView.findViewById(R.id.textViewItemDate);
-            imageViewItem = itemView.findViewById(R.id.imageViewItem);
             textViewUserId = itemView.findViewById(R.id.textViewUserId);
+            imageViewItem = itemView.findViewById(R.id.imageViewItem);
         }
     }
 }

@@ -87,7 +87,7 @@ public class LostAndFoundItem {
         this.imagePath = imagePath;
     }
 
-    public static List<LostAndFoundItem> getSampleData() {
+    /*public static List<LostAndFoundItem> getSampleData() {
         List<LostAndFoundItem> sampleData = new ArrayList<>();
 
         // Create sample LostAndFoundItem objects and add them to the list
@@ -95,7 +95,7 @@ public class LostAndFoundItem {
         sampleData.add(new LostAndFoundItem("User2", "Item 2", "Description 2", "Location 2", "Date 2", "imagePath2"));
 
         return sampleData;
-    }
+    }*/
 
     public void saveItem() {
         DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("lost_and_found_items");

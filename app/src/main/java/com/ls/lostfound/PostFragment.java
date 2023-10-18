@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -20,7 +21,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RadioGroup;
 import android.widget.Toast;
-
+import android.Manifest;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
@@ -29,20 +30,26 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 import com.squareup.picasso.Picasso;
-
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
-
 import androidx.annotation.NonNull;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import models.LostAndFoundItem;
 
 public class PostFragment extends Fragment {
+
+    private static final String TAG = "DiscoverFragment";
+
 
     private static final int REQUEST_PICK_IMAGE = 1;
     private static final int REQUEST_CAPTURE_IMAGE = 2;
@@ -57,6 +64,11 @@ public class PostFragment extends Fragment {
 
     private DatabaseReference databaseReference;
     FirebaseFirestore db = FirebaseFirestore.getInstance();
+    private static final int REQUEST_PERMISSION_CODE = 1; //
+
+
+
+
 
 
     @Override
@@ -143,6 +155,9 @@ public class PostFragment extends Fragment {
                 // Create a new LostAndFoundItem
                 LostAndFoundItem item = new LostAndFoundItem(userId, itemName, description, location, date, imagePath);
 
+                // Upload the image to Firebase Storage
+                uploadImageToFirebaseStorage(item);
+
                 // Store the item in Firestore
                 db.collection("lostAndFoundItems")
                         .add(item)
@@ -166,6 +181,73 @@ public class PostFragment extends Fragment {
 
 
         return view;
+    }
+    private void checkStoragePermissionAndUpload() {
+        // Check if permission is already granted
+        if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                == PackageManager.PERMISSION_GRANTED) {
+            // You have permission, proceed with image selection/upload
+            showImageSourceDialog();
+        } else {
+            // Permission not granted, request it
+            requestStoragePermission();
+        }
+    }
+    private void requestStoragePermission() {
+        // Request permission
+        ActivityCompat.requestPermissions(requireActivity(),
+                new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                REQUEST_PERMISSION_CODE);
+    }
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+        if (requestCode == REQUEST_PERMISSION_CODE) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                // Permission granted, proceed with image selection/upload
+                showImageSourceDialog();
+            } else {
+                // Permission denied, handle it (e.g., show a message to the user)
+                // Optionally, you can show a message to the user explaining why the permission is needed.
+                // You can also disable the "Upload" button if permission is denied.
+            }
+        }
+    }
+
+
+    private void uploadImageToFirebaseStorage(LostAndFoundItem item) {
+        // Get a reference to the Firebase Cloud Storage
+        FirebaseStorage storage = FirebaseStorage.getInstance();
+        StorageReference storageRef = storage.getReference();
+
+        // Create a reference to a specific image file
+        StorageReference imageRef = storageRef.child("images/" + System.currentTimeMillis() + ".jpg");
+
+        try {
+            // Upload the image
+            UploadTask uploadTask = imageRef.putFile(Uri.fromFile(new File(imagePath)));
+
+            uploadTask.addOnSuccessListener(taskSnapshot -> {
+                // Image uploaded successfully
+                // Get the download URL of the uploaded image
+                imageRef.getDownloadUrl().addOnSuccessListener(uri -> {
+                    // Save this URL in your Firebase Realtime Database or Firestore
+                    String imageUrl = uri.toString();
+                    item.setImagePath(imageUrl); // Set the image URL in the item
+
+                    // Save the item to your database (Firestore)
+                    saveItem(item);
+
+                    // Optionally, show a success message or navigate to a different screen
+                    Toast.makeText(requireContext(), " Image uploaded successfully!", Toast.LENGTH_SHORT).show();
+                });
+            });
+        } catch (Exception e) {
+            Log.e(TAG, "Failed to upload the image: " + e.getMessage());
+            e.printStackTrace();
+        }
+
     }
     private void saveItem(LostAndFoundItem item) {
         // Generate a unique key for the item in the database
