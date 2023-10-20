@@ -1,32 +1,42 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:fillViewport="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp"
+        android:background="@color/white">
 
     <TextView
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/post"
-        android:layout_gravity="center"
+        android:gravity="center_horizontal"
         android:textSize="24sp"
-        android:textColor="@android:color/black"
-        android:layout_marginTop="16dp"
-        android:layout_marginBottom="16dp" />
-
+        android:textStyle="bold"
+        android:textColor="@color/black"
+        android:layout_marginBottom="20dp" />
 
     <RadioGroup
         android:id="@+id/radioGroupType"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:layout_marginBottom="20dp"
+        android:orientation="horizontal"
+        android:gravity="center_horizontal">
+
         <RadioButton
             android:id="@+id/radioButtonLost"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Lost"
             android:checked="true" />
+
         <RadioButton
             android:id="@+id/radioButtonFound"
             android:layout_width="wrap_content"
@@ -34,59 +44,99 @@
             android:text="Found" />
     </RadioGroup>
 
-    <EditText
-        android:id="@+id/editTextItemName"
+    <com.google.android.material.textfield.TextInputLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Item Name"
-        />
+        android:layout_marginBottom="12dp"
+        app:boxStrokeColor="@color/purple_500"
+        app:hintTextColor="@color/light_gray"
+        app:boxBackgroundColor="@color/white">
 
-    <EditText
-        android:id="@+id/editTextDescription"
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/editTextName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Item Name" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Description"
-        android:inputType="text|textAutoComplete|textAutoCorrect|textCapCharacters" />
+        android:layout_marginBottom="12dp"
+        app:boxStrokeColor="@color/purple_500"
+        app:hintTextColor="@color/light_gray"
+        app:boxBackgroundColor="@color/white">
 
-    <EditText
-        android:id="@+id/editTextLocation"
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/editTextDescription"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Description"
+            android:inputType="textMultiLine"
+            android:gravity="top"
+            android:minLines="3"
+            android:maxLines="5" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Location" />
+        android:layout_marginBottom="12dp"
+        app:boxStrokeColor="@color/purple_500"
+        app:hintTextColor="@color/light_gray"
+        app:boxBackgroundColor="@color/white">
 
-    <EditText
-    android:id="@+id/editTextDate"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:hint="Select a date"
-    android:focusable="false"
-    android:inputType="none" />
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/editTextLocation"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Location" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:boxStrokeColor="@color/purple_500"
+        app:hintTextColor="@color/light_gray"
+        app:boxBackgroundColor="@color/white"
+        app:endIconMode="custom"
+        app:endIconDrawable="@drawable/ic_calendar">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/editTextDate"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Select a date"
+            android:focusable="false"
+            android:inputType="none"
+            android:layout_marginBottom="16dp"/>
+    </com.google.android.material.textfield.TextInputLayout>
 
     <Button
         android:id="@+id/buttonUploadImage"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Upload Image" />
+        android:text="Upload Image"
+        android:backgroundTint="@color/gray"
+        android:textColor="@color/white"
+        android:layout_marginBottom="16dp" />
 
     <ImageView
         android:id="@+id/imageViewUploaded"
         android:layout_width="match_parent"
         android:layout_height="200dp"
-        android:layout_marginTop="16dp"
         android:scaleType="centerCrop"
-        android:visibility="gone" />
+        android:layout_marginBottom="16dp" />
 
     <Button
         android:id="@+id/buttonPostItem"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Post Item" />
+        android:text="Post Item"
+        android:backgroundTint="@color/bluebutton"
+        android:textColor="@color/white" />
+
+    </LinearLayout>
 
 
-
-
-
-
-
-
-</LinearLayout>
+</ScrollView>

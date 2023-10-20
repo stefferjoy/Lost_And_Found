@@ -58,13 +58,13 @@ public class PostFragment extends Fragment {
 
 
     private RadioGroup radioGroupType;
-    private EditText editTextItemName, editTextDescription, editTextLocation, editTextDate;
+    private EditText editTextName, editTextDescription, editTextLocation, editTextDate;
     private Button buttonUploadImage, buttonPostItem;
     private ImageView imageViewUploaded;
 
-    private boolean isLost = true; // Default to "Lost" item
+    private boolean isLost = true;
 
-    private DatabaseReference databaseReference;
+//    private DatabaseReference databaseReference;
     FirebaseFirestore db = FirebaseFirestore.getInstance();
     private static final int REQUEST_PERMISSION_CODE = 1; //
 
@@ -76,11 +76,11 @@ public class PostFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_post, container, false);
-        databaseReference = FirebaseDatabase.getInstance().getReference("lost_and_found"); // Replace with your Firebase database reference
+        //databaseReference = FirebaseDatabase.getInstance().getReference("lost_and_found"); // Replace with your Firebase database reference
 
         // Initialize views
         radioGroupType = view.findViewById(R.id.radioGroupType);
-        editTextItemName = view.findViewById(R.id.editTextItemName);
+        editTextName = view.findViewById(R.id.editTextName);
         editTextDescription = view.findViewById(R.id.editTextDescription);
         editTextLocation = view.findViewById(R.id.editTextLocation);
         editTextDate = view.findViewById(R.id.editTextDate);
@@ -121,67 +121,60 @@ public class PostFragment extends Fragment {
 
 
 
+
         buttonUploadImage.setOnClickListener(v -> showImageSourceDialog());
 
         buttonPostItem.setEnabled(false);
 
 // Add TextChangedListeners to the required EditText fields
-        editTextItemName.addTextChangedListener(textWatcher);
+        editTextName.addTextChangedListener(textWatcher);
         editTextDescription.addTextChangedListener(textWatcher);
         editTextLocation.addTextChangedListener(textWatcher);
         editTextDate.addTextChangedListener(textWatcher);
 
 
 
+
         // Add a click listener to the button
         buttonPostItem.setOnClickListener(v -> {
-            String itemName = editTextItemName.getText().toString();
+
+            // Disable the button to prevent multiple submissions
+            buttonPostItem.setEnabled(false);
+
+            String itemName = editTextName.getText().toString();
             String description = editTextDescription.getText().toString();
             String location = editTextLocation.getText().toString();
             String date = editTextDate.getText().toString();
+
             // You should retrieve the user's email from your authentication system here
             FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-            String userEmail = user.getEmail();; // Replace with the user's actual email
+            if (user == null) {
+                Toast.makeText(requireContext(), "User is not logged in", Toast.LENGTH_SHORT).show();
+                buttonPostItem.setEnabled(true); // Re-enable the button
+                return;
+            }
+            String userEmail = user.getEmail();
 
-            // Extract the user ID from the email
-            String userId = extractUserIDFromEmail(userEmail);
-
-            if (itemName.isEmpty() || description.isEmpty() || location.isEmpty() || date.isEmpty() ) {
-                // Show an error message indicating that all fields are required
+            // Validate inputs
+            if (itemName.isEmpty() || description.isEmpty() || location.isEmpty() || date.isEmpty() || userEmail == null || localImagePath == null) {
                 Toast.makeText(requireContext(), "Please fill in all required fields and upload an image.", Toast.LENGTH_SHORT).show();
+                buttonPostItem.setEnabled(true); // Re-enable the button
                 return;
             }
 
+            // Create the item without an image URL
+            String userId = user.getUid();
+            String userName = extractUserNameFromEmail(userEmail);
+            LostAndFoundItem item = new LostAndFoundItem(userId, userName, itemName, description, location, date, localImagePath, null);
 
-            if (userId != null) {
-                // Create a new LostAndFoundItem
-                LostAndFoundItem item = new LostAndFoundItem(userId, itemName, description, location, date, localImagePath, firebaseImageUrl );
+            // Generate the correct ID based on whether the item is lost or found
+            item.generateIdForStatus(isLost);
 
-                //firebaseImageUrl = "gs://lostandfound-51162.appspot.com/images/1697646777974.jpg";
-
-                // Upload the image to Firebase Storage
-                uploadImageToFirebaseStorage(item);
-
-                // Store the item in Firestore
-                db.collection("lostAndFoundItems")
-                        .add(item)
-                        .addOnSuccessListener(documentReference -> {
-                            // Document successfully written to Firestore
-                            String itemId = documentReference.getId();
-
-                            // Optionally, show a success message or navigate to a different screen
-                            Toast.makeText(requireContext(), "Item posted successfully!", Toast.LENGTH_SHORT).show();
-                        })
-                        .addOnFailureListener(e -> {
-                            // Handle the error
-                            Toast.makeText(requireContext(), "Failed to post item: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-                        });
-            } else {
-                // Handle the case where the user ID extraction fails
-                Toast.makeText(requireContext(), "Invalid email address", Toast.LENGTH_SHORT).show();
-            }
-
+            // Attempt to upload the image, which will then save the item if successful
+            uploadImageToFirebaseStorage(item);
         });
+
+
 
 
         return view;
@@ -219,58 +212,55 @@ public class PostFragment extends Fragment {
         }
     }
 
-
     private void uploadImageToFirebaseStorage(LostAndFoundItem item) {
-        // Get a reference to the Firebase Cloud Storage
         FirebaseStorage storage = FirebaseStorage.getInstance();
         StorageReference storageRef = storage.getReference();
-
-        // Create a reference to a specific image file
         StorageReference imageRef = storageRef.child("images/" + System.currentTimeMillis() + ".jpg");
 
-        // Upload the image using the putFile method
-        UploadTask uploadTask = imageRef.putFile(Uri.fromFile(new File(localImagePath)));
+        // Start the upload task
+        UploadTask uploadTask = imageRef.putFile(Uri.fromFile(new File(item.getLocalImagePath())));
 
-        try {
-            uploadTask.addOnSuccessListener(taskSnapshot -> {
-                // Image uploaded successfully
-                // Get the download URL of the uploaded image
-                imageRef.getDownloadUrl().addOnSuccessListener(uri -> {
-                    // Save this URL in your Firebase Realtime Database or Firestore
-                    firebaseImageUrl = uri.toString();
-                    item.setFirebaseImageUrl(firebaseImageUrl); // Store the Firebase Storage image URL in the item
-
-
-                    Log.d("YourTag", "URI: " + firebaseImageUrl.toString());
-
-                    // Save the item to your database (Firestore)
-                    saveItem(item);
-
-                    // Optionally, show a success message or navigate to a different screen
-                    Toast.makeText(requireContext(), "Image uploaded successfully!", Toast.LENGTH_SHORT).show();
-                });
-            }).addOnFailureListener(e -> {
-                Log.e(TAG, "Failed to upload the image: " + e.getMessage());
-                Toast.makeText(requireContext(), "Failed to upload the image: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+        uploadTask.addOnSuccessListener(taskSnapshot -> {
+            // Get the download URL
+            imageRef.getDownloadUrl().addOnSuccessListener(uri -> {
+                // Set the image URL and save the item to Firestore
+                firebaseImageUrl = uri.toString();
+                item.setFirebaseImageUrl(firebaseImageUrl);
+                // This will generate a lostId or foundId depending on the type of item
+                item.generateIdForStatus(isLost);
+                saveItemToFirestore(item);
             });
-        } catch (Exception e) {
+        }).addOnFailureListener(e -> {
+            // If the image upload fails, do not save the item and re-enable the button
             Log.e(TAG, "Failed to upload the image: " + e.getMessage());
             Toast.makeText(requireContext(), "Failed to upload the image: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-            e.printStackTrace();
-        }
+            buttonPostItem.setEnabled(true);
+        });
+    }
+    private void saveItemToFirestore(LostAndFoundItem item) {
+        // Create a new document reference in your collection
+        DocumentReference newDocRef = db.collection("lostAndFoundItems").document();
+
+        // Set the document ID to the item
+        item.setDocumentId(newDocRef.getId());
+
+        // Now save the item to Firestore using the set() method
+        newDocRef.set(item)
+                .addOnSuccessListener(aVoid -> {
+                    Toast.makeText(requireContext(), "Item posted successfully!", Toast.LENGTH_SHORT).show();
+                    buttonPostItem.setEnabled(true); // Re-enable the button after successful post
+
+                    // If you need to do something with the item after it's saved, do it here
+                    // For example, you could add it to an adapter or update the UI
+                })
+                .addOnFailureListener(e -> {
+                    Toast.makeText(requireContext(), "Failed to post item: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                    buttonPostItem.setEnabled(true); // Re-enable the button if the post fails
+                });
     }
 
 
 
-    private void saveItem(LostAndFoundItem item) {
-        // Generate a unique key for the item in the database
-        String itemId = databaseReference.push().getKey();
-
-        // Set the item in the database using the generated key
-        databaseReference.child(itemId).setValue(item);
-
-        // Optionally, show a success message or handle any errors here
-    }
 
     private void showImageSourceDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
@@ -310,26 +300,16 @@ public class PostFragment extends Fragment {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if (resultCode == Activity.RESULT_OK) {
-            if (requestCode == REQUEST_PICK_IMAGE) {
-                if (data != null) {
-                    Uri selectedImageUri = data.getData();
-
-                    // Store the local file path
-                    localImagePath = getRealPathFromURI(selectedImageUri);
-
-                    // Display the selected image using the localImagePath
-                    imageViewUploaded.setVisibility(View.VISIBLE);
-                    Picasso.get().load("file://" + firebaseImageUrl).into(imageViewUploaded);
-                }
-            } else if (requestCode == REQUEST_CAPTURE_IMAGE) {
-                // The image has been captured, and the file path is already stored in 'localImagePath'
-
-                // Display the captured image from the localImagePath
-                imageViewUploaded.setVisibility(View.VISIBLE);
-                Picasso.get().load("file://" + localImagePath).into(imageViewUploaded);
-            }
+        if (requestCode == REQUEST_PICK_IMAGE) {
+            Uri selectedImageUri = data.getData();
+            localImagePath = getRealPathFromURI(selectedImageUri);
+            imageViewUploaded.setVisibility(View.VISIBLE);
+            Picasso.get().load(new File(localImagePath)).into(imageViewUploaded);
+        } else if (requestCode == REQUEST_CAPTURE_IMAGE) {
+            imageViewUploaded.setVisibility(View.VISIBLE);
+            Picasso.get().load(new File(localImagePath)).into(imageViewUploaded);
         }
+
     }
 
 
@@ -346,7 +326,7 @@ public class PostFragment extends Fragment {
         }
         return contentUri.getPath(); // Fallback
     }
-    public String extractUserIDFromEmail(String email) {
+    public String extractUserNameFromEmail(String email) {
         int atIndex = email.indexOf('@');
 
         if (atIndex != -1) {
@@ -368,7 +348,7 @@ public class PostFragment extends Fragment {
         @Override
         public void afterTextChanged(Editable s) {
             // Check if all required fields are filled
-            boolean allFieldsFilled = !editTextItemName.getText().toString().isEmpty()
+            boolean allFieldsFilled = !editTextName.getText().toString().isEmpty()
                     && !editTextDescription.getText().toString().isEmpty()
                     && !editTextLocation.getText().toString().isEmpty()
                     && !editTextDate.getText().toString().isEmpty();

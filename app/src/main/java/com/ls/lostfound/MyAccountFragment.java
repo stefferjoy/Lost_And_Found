@@ -1,24 +1,41 @@
+
 package com.ls.lostfound;
+import android.app.FragmentManager;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.TextView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.squareup.picasso.Picasso;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import models.LostAndFoundItem;
+import myAccount.MyAccountAdapter;
+import myAccount.MyAccountListItem;
+import myAccount.MyPostsFragment;
+
 
 public class MyAccountFragment extends Fragment {
 
+    private static final String TAG = "MyAccountFragment";
     FirebaseAuth auth;
     Button button;
     TextView textView;
     FirebaseUser user;
+
+
+    private List<LostAndFoundItem> userPostsList;
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -48,15 +65,52 @@ public class MyAccountFragment extends Fragment {
             }
         });
 
-        ImageView accountImageView = rootView.findViewById(R.id.accountImageView);
+        // Initialize the RecyclerView
+        RecyclerView recyclerViewMyAccount = rootView.findViewById(R.id.recyclerViewMyAccount);
+        recyclerViewMyAccount.setLayoutManager(new LinearLayoutManager(requireContext()));
 
-        // Known Firebase Storage image URL
-        String firebaseImageUrl = "https://firebasestorage.googleapis.com/v0/b/lostandfound-51162.appspot.com/o/images%2F1697646777974.jpg?alt=media&token=33cf835d-f1f5-4026-ab47-7c2df4e1519c";
 
-        // Load the Firebase image into the ImageView
-        Picasso.get().load(firebaseImageUrl).into(accountImageView);
+        // Initialize the RecyclerView
+        RecyclerView recyclerView = rootView.findViewById(R.id.recyclerViewMyAccount);
+        recyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
+
+        // Create a list of MyAccountListItem
+        List<MyAccountListItem> items = new ArrayList<>();
+        items.add(new MyAccountListItem(R.drawable.account_icon, "My Profile"));
+        items.add(new MyAccountListItem(R.drawable.edit_post_icon, "My Posts"));
+        items.add(new MyAccountListItem(R.drawable.edit_image_icon, "Change Profile Photo"));
+
+        // Create the adapter and set it to the RecyclerView
+        MyAccountAdapter adapter = new MyAccountAdapter(items);
+        recyclerView.setAdapter(adapter);
+
+        // Set the item click listener
+        adapter.setOnItemClickListener(new MyAccountAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(int position) {
+                Log.d(TAG, "Item clicked at position: " + position);
+                if (position == 1) { // Check if the "My Posts" item was clicked
+                    openMyPostsFragment(); // Open the MyPostsFragment
+                }
+            }
+        });
+
 
         return rootView;
     }
+
+
+    public void openMyPostsFragment() {
+        MyPostsFragment myPostsFragment = new MyPostsFragment();
+
+        FragmentTransaction transaction = getParentFragmentManager().beginTransaction();
+        transaction.replace(R.id.container_my_account, myPostsFragment); // Use the correct container ID
+        transaction.addToBackStack(null); // Add to the back stack if needed
+        transaction.commit();
+    }
 }
+
+
+
+
 

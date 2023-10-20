@@ -1,61 +1,72 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical">
 
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/my_account"
-        android:layout_gravity="center"
-        android:textSize="24sp"
-        android:textColor="@android:color/black"
-        android:layout_marginTop="16dp"
-        android:layout_marginBottom="16dp" />
-
-    <RelativeLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        >
-        <TextView
-            android:id="@+id/user_details"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-
-    </RelativeLayout>
-
-    <ImageView
-        android:id="@+id/accountImageView"
-        android:layout_width="200dp"
-        android:layout_height="200dp"
-        android:scaleType="fitCenter"
-        android:layout_centerInParent="true"
-        android:src="@drawable/placeholder_image"
-        android:visibility="visible" />
-
-
-    <ListView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
-    <Button
-        android:id="@+id/logout"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:text="@string/logout" />
-
-
-    <com.google.android.material.tabs.TabLayout
-        android:id="@+id/tabs"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/recyclerView"
-        android:contentDescription="@string/navigation_tabs" />
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/my_account"
+            android:layout_gravity="center"
+            android:textSize="24sp"
+            android:textColor="@android:color/black"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="16dp" />
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center">
+            <TextView
+                android:id="@+id/user_details"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                />
+
+        </RelativeLayout>
 
 
 
-</LinearLayout>
+        <androidx.recyclerview.widget.RecyclerView
+            android:layout_marginTop="50dp"
+            android:id="@+id/recyclerViewMyAccount"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:clickable="true"
+            />
+
+
+        <Button
+            android:layout_marginTop="20dp"
+            android:id="@+id/logout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:text="@string/logout"
+            android:layout_below="@+id/user_details" />
+
+        <com.google.android.material.tabs.TabLayout
+            android:id="@+id/tabs"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/recyclerViewMyAccount"
+            android:contentDescription="@string/navigation_tabs" />
+
+    </LinearLayout>
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/container_my_account"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

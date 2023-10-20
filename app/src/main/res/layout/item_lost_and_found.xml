@@ -1,10 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
     android:padding="16dp">
+
+    <LinearLayout
+        android:id="@+id/itemContentLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_toStartOf="@+id/editDeleteLayout">
 
 
     <ImageView
@@ -53,10 +60,40 @@
 
     <!-- User ID TextView -->
     <TextView
-        android:id="@+id/textViewUserId"
+        android:id="@+id/textViewUserName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="User ID"
         android:textSize="14sp"
         android:textColor="@android:color/darker_gray" />
-</LinearLayout>
+
+    </LinearLayout>
+    <!-- Layout for Edit and Delete buttons -->
+    <LinearLayout
+        android:id="@+id/editDeleteLayout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_alignParentEnd="true"
+        android:layout_centerVertical="true">
+
+        <!-- Edit Button -->
+        <ImageView
+            android:id="@+id/editButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@android:drawable/ic_menu_edit"
+            android:contentDescription="@string/edit"
+            android:layout_marginEnd="8dp"/>
+
+        <!-- Delete Button -->
+        <ImageView
+            android:id="@+id/deleteButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@android:drawable/ic_delete"
+            android:contentDescription="@string/delete"/>
+    </LinearLayout>
+
+</RelativeLayout>
+

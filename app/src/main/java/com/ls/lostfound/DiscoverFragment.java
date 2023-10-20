@@ -19,12 +19,12 @@ import java.util.List;
 import models.LostAndFoundItem;
 import models.ItemAdapter;
 
-public class DiscoverFragment extends Fragment {
+public class DiscoverFragment extends Fragment implements ItemAdapter.OnDeleteListener,ItemAdapter.OnEditListener {
     private List<LostAndFoundItem> itemList = new ArrayList<>();
     private RecyclerView recyclerView;
     private SwipeRefreshLayout swipeRefreshLayout;
 
-    private ItemAdapter adapter; // Declare an ItemAdapter
+    private ItemAdapter adapter;
 
     private static final String TAG = "DiscoverFragment";
 
@@ -38,13 +38,14 @@ public class DiscoverFragment extends Fragment {
         swipeRefreshLayout = view.findViewById(R.id.swipeRefreshLayout);
 
         // Set up your RecyclerView with an adapter
-        adapter = new ItemAdapter(itemList, requireContext());
+        adapter = new ItemAdapter(itemList, requireContext(),false,this,this);
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
 
         // Set up swipe-to-refresh
         swipeRefreshLayout.setOnRefreshListener(() -> {
             // Handle the refresh action here
+            swipeRefreshLayout.setRefreshing(false);
             refreshData();
         });
 
@@ -62,8 +63,10 @@ public class DiscoverFragment extends Fragment {
                         itemList.clear(); // Clear the previous data
                         for (QueryDocumentSnapshot document : task.getResult()) {
                             LostAndFoundItem item = document.toObject(LostAndFoundItem.class);
+                            item.setDocumentId(document.getId()); // Set the document ID on the object
                             itemList.add(item);
                         }
+
                         // Notify the adapter of the data change
                         adapter.notifyDataSetChanged();
                     } else {
@@ -80,5 +83,15 @@ public class DiscoverFragment extends Fragment {
         // Implement the logic to refresh your data
         // For example, you can call fetchItemsFromFirestore() again
         fetchItemsFromFirestore();
+    }
+
+    @Override
+    public void onEditClicked(LostAndFoundItem item) {
+
+    }
+
+    @Override
+    public void onDeleteClicked(LostAndFoundItem item) {
+
     }
 }

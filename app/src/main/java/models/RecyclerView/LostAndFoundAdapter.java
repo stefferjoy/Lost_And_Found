@@ -40,7 +40,6 @@ public class LostAndFoundAdapter extends RecyclerView.Adapter<LostAndFoundAdapte
             holder.textViewLocation.setText("Location: " + currentItem.getLocation());
             holder.textViewDate.setText("Date: " + currentItem.getDate());
 
-
             if (currentItem.getFirebaseImageUrl() != null) {
                 // Load the image from Firebase Storage
                 Picasso.get().load(currentItem.getFirebaseImageUrl()).into(holder.imageViewItem);
@@ -49,10 +48,7 @@ public class LostAndFoundAdapter extends RecyclerView.Adapter<LostAndFoundAdapte
                 holder.imageViewItem.setImageResource(R.drawable.placeholder_image);
             }
         }
-
-
     }
-
 
     @Override
     public int getItemCount() {
@@ -65,7 +61,7 @@ public class LostAndFoundAdapter extends RecyclerView.Adapter<LostAndFoundAdapte
 
         public LostAndFoundItemViewHolder(@NonNull View itemView) {
             super(itemView);
-            textViewUser = itemView.findViewById(R.id.textViewUserId);
+            textViewUser = itemView.findViewById(R.id.textViewUserName);
             textViewName = itemView.findViewById(R.id.textViewItemName);
             textViewDescription = itemView.findViewById(R.id.textViewItemDescription);
             textViewLocation = itemView.findViewById(R.id.textViewItemLocation);
