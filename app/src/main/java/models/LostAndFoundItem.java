@@ -13,20 +13,22 @@ public class LostAndFoundItem {
     private String description;
     private String location;
     private String date;
-    private String imagePath;
+    private String localImagePath;
+    private String firebaseImageUrl;
 
     public LostAndFoundItem() {
         // Default no-argument constructor required by Firebase Firestore
     }
 
-    public LostAndFoundItem(String userId, String itemName, String description, String location, String date, String imagePath) {
+    public LostAndFoundItem(String userId, String itemName, String description, String location, String date, String localImagePath, String firebaseImageUrl) {
         this.postId = UUID.randomUUID().toString(); // Generate a unique post ID
         this.userId = userId;
         this.itemName = itemName;
         this.description = description;
         this.location = location;
         this.date = date;
-        this.imagePath = imagePath;
+        this.localImagePath = localImagePath;
+        this.firebaseImageUrl = firebaseImageUrl;
     }
 
     // Getters and setters for the model properties
@@ -79,20 +81,29 @@ public class LostAndFoundItem {
         this.date = date;
     }
 
-    public String getImagePath() {
-        return imagePath;
+    public String getLocalImagePath() {
+        return localImagePath;
     }
 
-    public void setImagePath(String imagePath) {
-        this.imagePath = imagePath;
+    public void setLocalImagePath(String localImagePath) {
+        this.localImagePath = localImagePath;
     }
+
+    public String getFirebaseImageUrl() {
+        return firebaseImageUrl;
+    }
+
+    public void setFirebaseImageUrl(String firebaseImageUrl) {
+        this.firebaseImageUrl = firebaseImageUrl;
+    }
+
 
     /*public static List<LostAndFoundItem> getSampleData() {
         List<LostAndFoundItem> sampleData = new ArrayList<>();
 
         // Create sample LostAndFoundItem objects and add them to the list
         sampleData.add(new LostAndFoundItem("User1", "Item 1", "Description 1", "Location 1", "Date 1", "imagePath1"));
-        sampleData.add(new LostAndFoundItem("User2", "Item 2", "Description 2", "Location 2", "Date 2", "imagePath2"));
+        //sampleData.add(new LostAndFoundItem("User2", "Item 2", "Description 2", "Location 2", "Date 2", "imagePath2"));
 
         return sampleData;
     }*/

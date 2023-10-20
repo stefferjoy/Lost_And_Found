@@ -1,6 +1,7 @@
 package models;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,8 +19,10 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemViewHolder
     private List<LostAndFoundItem> itemList;
     private Context context;
 
-    public ItemAdapter(List<LostAndFoundItem> itemList) {
+
+    public ItemAdapter(List<LostAndFoundItem> itemList, Context context) {
         this.itemList = itemList;
+        this.context = context; // Assign the provided context
     }
 
     @NonNull
@@ -33,13 +36,28 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemViewHolder
     public void onBindViewHolder(@NonNull ItemViewHolder holder, int position) {
         LostAndFoundItem currentItem = itemList.get(position);
 
+        Log.d("ImageURL", "Image URL: " + currentItem.getFirebaseImageUrl());
+
+        // Load and display the image using Picasso
+        if(currentItem.getFirebaseImageUrl() != null) {
+            Log.d("LostAndFoundAdapter", "Loading image: " + currentItem.getFirebaseImageUrl());
+            Picasso.get()
+                    .load(currentItem.getFirebaseImageUrl())
+                    .error(R.drawable.error_image)
+                    .into(holder.imageViewItem);
+            Log.d("ImageURL", "Image URL: " + currentItem.getFirebaseImageUrl());
+        } else {
+            Log.e("LostAndFoundAdapter", "FirebaseImageUrl is null");
+        }
+
+
         // Set the values of your views
         holder.textViewName.setText(currentItem.getItemName());
         holder.textViewDescription.setText(currentItem.getDescription());
         holder.textViewLocation.setText(currentItem.getLocation());
         holder.textViewDate.setText(currentItem.getDate());
         holder.textViewUserId.setText("User ID: " + currentItem.getUserId());
-        Picasso.get().load(currentItem.getImagePath()).into(holder.imageViewItem);
+        Picasso.get().load(currentItem.getFirebaseImageUrl()).into(holder.imageViewItem);
     }
 
     @Override

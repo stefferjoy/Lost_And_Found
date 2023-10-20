@@ -6,12 +6,15 @@
     android:orientation="vertical"
     android:padding="16dp">
 
+
     <ImageView
         android:id="@+id/imageViewItem"
         android:layout_width="100dp"
         android:layout_height="100dp"
-        android:scaleType="centerCrop"
-        android:layout_marginTop="8dp" />
+        android:scaleType="fitCenter"
+        android:layout_marginTop="8dp"
+        android:src="@drawable/placeholder_image"
+        android:visibility="visible"/>
 
     <TextView
         android:id="@+id/textViewItemName"

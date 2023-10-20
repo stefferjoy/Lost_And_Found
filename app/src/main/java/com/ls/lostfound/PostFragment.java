@@ -53,7 +53,9 @@ public class PostFragment extends Fragment {
 
     private static final int REQUEST_PICK_IMAGE = 1;
     private static final int REQUEST_CAPTURE_IMAGE = 2;
-    private String imagePath; // Stores the file path of the selected image
+    private String localImagePath; // Store the local file path of the selected image
+    private String firebaseImageUrl; // Store the Firebase Storage image URL
+
 
     private RadioGroup radioGroupType;
     private EditText editTextItemName, editTextDescription, editTextLocation, editTextDate;
@@ -144,7 +146,7 @@ public class PostFragment extends Fragment {
             // Extract the user ID from the email
             String userId = extractUserIDFromEmail(userEmail);
 
-            if (itemName.isEmpty() || description.isEmpty() || location.isEmpty() || date.isEmpty() || imagePath == null) {
+            if (itemName.isEmpty() || description.isEmpty() || location.isEmpty() || date.isEmpty() ) {
                 // Show an error message indicating that all fields are required
                 Toast.makeText(requireContext(), "Please fill in all required fields and upload an image.", Toast.LENGTH_SHORT).show();
                 return;
@@ -153,7 +155,9 @@ public class PostFragment extends Fragment {
 
             if (userId != null) {
                 // Create a new LostAndFoundItem
-                LostAndFoundItem item = new LostAndFoundItem(userId, itemName, description, location, date, imagePath);
+                LostAndFoundItem item = new LostAndFoundItem(userId, itemName, description, location, date, localImagePath, firebaseImageUrl );
+
+                //firebaseImageUrl = "gs://lostandfound-51162.appspot.com/images/1697646777974.jpg";
 
                 // Upload the image to Firebase Storage
                 uploadImageToFirebaseStorage(item);
@@ -224,31 +228,40 @@ public class PostFragment extends Fragment {
         // Create a reference to a specific image file
         StorageReference imageRef = storageRef.child("images/" + System.currentTimeMillis() + ".jpg");
 
-        try {
-            // Upload the image
-            UploadTask uploadTask = imageRef.putFile(Uri.fromFile(new File(imagePath)));
+        // Upload the image using the putFile method
+        UploadTask uploadTask = imageRef.putFile(Uri.fromFile(new File(localImagePath)));
 
+        try {
             uploadTask.addOnSuccessListener(taskSnapshot -> {
                 // Image uploaded successfully
                 // Get the download URL of the uploaded image
                 imageRef.getDownloadUrl().addOnSuccessListener(uri -> {
                     // Save this URL in your Firebase Realtime Database or Firestore
-                    String imageUrl = uri.toString();
-                    item.setImagePath(imageUrl); // Set the image URL in the item
+                    firebaseImageUrl = uri.toString();
+                    item.setFirebaseImageUrl(firebaseImageUrl); // Store the Firebase Storage image URL in the item
+
+
+                    Log.d("YourTag", "URI: " + firebaseImageUrl.toString());
 
                     // Save the item to your database (Firestore)
                     saveItem(item);
 
                     // Optionally, show a success message or navigate to a different screen
-                    Toast.makeText(requireContext(), " Image uploaded successfully!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(requireContext(), "Image uploaded successfully!", Toast.LENGTH_SHORT).show();
                 });
+            }).addOnFailureListener(e -> {
+                Log.e(TAG, "Failed to upload the image: " + e.getMessage());
+                Toast.makeText(requireContext(), "Failed to upload the image: " + e.getMessage(), Toast.LENGTH_SHORT).show();
             });
         } catch (Exception e) {
             Log.e(TAG, "Failed to upload the image: " + e.getMessage());
+            Toast.makeText(requireContext(), "Failed to upload the image: " + e.getMessage(), Toast.LENGTH_SHORT).show();
             e.printStackTrace();
         }
-
     }
+
+
+
     private void saveItem(LostAndFoundItem item) {
         // Generate a unique key for the item in the database
         String itemId = databaseReference.push().getKey();
@@ -273,7 +286,7 @@ public class PostFragment extends Fragment {
                 Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
                 File imageFile = createImageFile();
                 if (imageFile != null) {
-                    imagePath = imageFile.getAbsolutePath();
+                    localImagePath = imageFile.getAbsolutePath();
                     intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(imageFile));
                     startActivityForResult(intent, REQUEST_CAPTURE_IMAGE);
                 }
@@ -301,23 +314,24 @@ public class PostFragment extends Fragment {
             if (requestCode == REQUEST_PICK_IMAGE) {
                 if (data != null) {
                     Uri selectedImageUri = data.getData();
-                    imagePath = getRealPathFromURI(selectedImageUri);
 
-                    // Add debug log to check the selected image path
-                    Log.d("ImageCapture", "Selected Image Path: " + imagePath);
+                    // Store the local file path
+                    localImagePath = getRealPathFromURI(selectedImageUri);
+
+                    // Display the selected image using the localImagePath
+                    imageViewUploaded.setVisibility(View.VISIBLE);
+                    Picasso.get().load("file://" + firebaseImageUrl).into(imageViewUploaded);
                 }
             } else if (requestCode == REQUEST_CAPTURE_IMAGE) {
-                // The image has been captured, and the file path is already stored in 'imagePath'
+                // The image has been captured, and the file path is already stored in 'localImagePath'
 
-                // Add debug log to check the captured image path
-                Log.d("ImageCapture", "Captured Image Path: " + imagePath);
+                // Display the captured image from the localImagePath
+                imageViewUploaded.setVisibility(View.VISIBLE);
+                Picasso.get().load("file://" + localImagePath).into(imageViewUploaded);
             }
-
-            // Load and display the selected/captured image in the imageViewUploaded
-            imageViewUploaded.setVisibility(View.VISIBLE);
-            Picasso.get().load("file://" + imagePath).into(imageViewUploaded);
         }
     }
+
 
 
     private String getRealPathFromURI(Uri contentUri) {
@@ -357,8 +371,7 @@ public class PostFragment extends Fragment {
             boolean allFieldsFilled = !editTextItemName.getText().toString().isEmpty()
                     && !editTextDescription.getText().toString().isEmpty()
                     && !editTextLocation.getText().toString().isEmpty()
-                    && !editTextDate.getText().toString().isEmpty()
-                    && imagePath != null;
+                    && !editTextDate.getText().toString().isEmpty();
 
             // Enable the "Post" button if all required fields are filled, otherwise disable it
             buttonPostItem.setEnabled(allFieldsFilled);

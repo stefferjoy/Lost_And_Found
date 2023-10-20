@@ -33,16 +33,26 @@ public class LostAndFoundAdapter extends RecyclerView.Adapter<LostAndFoundAdapte
     public void onBindViewHolder(@NonNull LostAndFoundItemViewHolder holder, int position) {
         LostAndFoundItem currentItem = itemList.get(position);
 
-        holder.textViewUser.setText("User: " + currentItem.getUserId()); // Display the user ID
-        holder.textViewName.setText("Item Name: " + currentItem.getItemName());
-        holder.textViewDescription.setText("Description: " + currentItem.getDescription());
-        holder.textViewLocation.setText("Location: " + currentItem.getLocation());
-        holder.textViewDate.setText("Date: " + currentItem.getDate());
+        if (currentItem != null) {
+            holder.textViewUser.setText("User: " + currentItem.getUserId());
+            holder.textViewName.setText("Item Name: " + currentItem.getItemName());
+            holder.textViewDescription.setText("Description: " + currentItem.getDescription());
+            holder.textViewLocation.setText("Location: " + currentItem.getLocation());
+            holder.textViewDate.setText("Date: " + currentItem.getDate());
 
-        if (currentItem.getImagePath() != null) {
-            Picasso.get().load(currentItem.getImagePath()).into(holder.imageViewItem);
+
+            if (currentItem.getFirebaseImageUrl() != null) {
+                // Load the image from Firebase Storage
+                Picasso.get().load(currentItem.getFirebaseImageUrl()).into(holder.imageViewItem);
+            } else {
+                // You can set a placeholder image here if needed
+                holder.imageViewItem.setImageResource(R.drawable.placeholder_image);
+            }
         }
+
+
     }
+
 
     @Override
     public int getItemCount() {
