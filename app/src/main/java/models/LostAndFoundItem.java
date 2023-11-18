@@ -21,6 +21,9 @@ public class LostAndFoundItem {
     private String date;
     private String localImagePath;
     private String firebaseImageUrl;
+    private String address;
+    private double latitude;
+    private double longitude;
 
     public LostAndFoundItem() {
         // Default no-argument constructor required by Firebase Firestore
@@ -129,6 +132,30 @@ public class LostAndFoundItem {
 
     public void setFirebaseImageUrl(String firebaseImageUrl) {
         this.firebaseImageUrl = firebaseImageUrl;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public double getLatitude() {
+        return latitude;
+    }
+
+    public void setLatitude(double latitude) {
+        this.latitude = latitude;
+    }
+
+    public double getLongitude() {
+        return longitude;
+    }
+
+    public void setLongitude(double longitude) {
+        this.longitude = longitude;
     }
 
     // New method to set the correct ID based on item status

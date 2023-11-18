@@ -3,6 +3,7 @@ package com.ls.lostfound;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
@@ -22,8 +23,20 @@ import android.widget.ImageView;
 import android.widget.RadioGroup;
 import android.widget.Toast;
 import android.Manifest;
+
+import com.google.android.gms.common.api.ApiException;
+import com.google.android.gms.common.api.Status;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.libraries.places.api.Places;
+import com.google.android.libraries.places.api.model.AutocompletePrediction;
+import com.google.android.libraries.places.api.model.Place;
+import com.google.android.libraries.places.api.model.TypeFilter;
+import com.google.android.libraries.places.api.net.FindAutocompletePredictionsRequest;
+import com.google.android.libraries.places.api.net.PlacesClient;
+import com.google.android.libraries.places.widget.Autocomplete;
+import com.google.android.libraries.places.widget.AutocompleteActivity;
+import com.google.android.libraries.places.widget.model.AutocompleteActivityMode;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
@@ -37,13 +50,20 @@ import com.squareup.picasso.Picasso;
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import models.AutocompletePredictionAdapter;
 import models.LostAndFoundItem;
 
 public class PostFragment extends Fragment {
@@ -59,24 +79,142 @@ public class PostFragment extends Fragment {
 
     private RadioGroup radioGroupType;
     private EditText editTextName, editTextDescription, editTextLocation, editTextDate;
+    private String selectedPlaceAddress = ""; // Initialize with empty string
+
     private Button buttonUploadImage, buttonPostItem;
     private ImageView imageViewUploaded;
 
     private boolean isLost = true;
 
-//    private DatabaseReference databaseReference;
+    //    private DatabaseReference databaseReference;
     FirebaseFirestore db = FirebaseFirestore.getInstance();
     private static final int REQUEST_PERMISSION_CODE = 1; //
 
+    private PlacesClient placesClient;
+
+    String apiKey = BuildConfig.PLACES_API_KEY;
+
+    private static final int AUTOCOMPLETE_REQUEST_CODE = 3; // Choose an arbitrary request code value
 
 
 
+    private AutocompletePredictionAdapter adapter;
+    private RecyclerView recyclerViewLocationSuggestions;
+
+    // This function is called when an item from the autocomplete predictions is clicked
+    private void onPredictionClicked(AutocompletePrediction prediction) {
+        editTextLocation.setText(prediction.getFullText(null).toString());
+        selectedPlaceAddress = prediction.getPrimaryText(null).toString();
+        // Clear the predictions and hide the RecyclerView
+        adapter.clearPredictions();
+        recyclerViewLocationSuggestions.setVisibility(View.GONE);
+
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+
+
+        // Initialize the Places SDK
+        if (!Places.isInitialized()) {
+            Places.initialize(requireContext().getApplicationContext(), apiKey);
+        }
+        // Create a new Places client instance
+        placesClient = Places.createClient(requireContext());
+
+    }
+
+    private void showPlacesSearchBox() {
+        // Set the fields to specify which types of place data to return after the user has made a selection.
+        List<Place.Field> fields = Arrays.asList(Place.Field.ID, Place.Field.NAME, Place.Field.ADDRESS);
+
+        // Start the autocomplete intent.
+        Intent intent = new Autocomplete.IntentBuilder(AutocompleteActivityMode.FULLSCREEN, fields)
+                .build(requireContext());
+        startActivityForResult(intent, AUTOCOMPLETE_REQUEST_CODE);
+
+    }
+
+    private void setupButtonPostItem() {
+        // Add a click listener to the button
+        buttonPostItem.setOnClickListener(v -> {
+
+            // Disable the button to prevent multiple submissions
+            buttonPostItem.setEnabled(false);
+
+            String itemName = editTextName.getText().toString();
+            String description = editTextDescription.getText().toString();
+            // Make sure this is up-to-date with the selected address
+            selectedPlaceAddress = editTextLocation.getText().toString();
+            String date = editTextDate.getText().toString();
+
+            // You should retrieve the user's email from your authentication system here
+            FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+            if (user == null) {
+                Toast.makeText(requireContext(), "User is not logged in", Toast.LENGTH_SHORT).show();
+                buttonPostItem.setEnabled(true); // Re-enable the button
+                return;
+            }
+
+            String userEmail = user.getEmail();
+
+            // Create the item without an image URL
+            String userId = user.getUid();
+            String userName = extractUserNameFromEmail(userEmail);
+
+            // Check if the selectedPlaceAddress is set (not empty)
+            if (selectedPlaceAddress.isEmpty()) {
+                // If not, show a toast, re-enable the button and return
+                Toast.makeText(getContext(), "Please select an address", Toast.LENGTH_SHORT).show();
+                buttonPostItem.setEnabled(true); // Re-enable the button
+                return;
+            }
+            // Disable the button to prevent multiple submissions
+            buttonPostItem.setEnabled(false);
+
+
+
+
+            // Add log statements to check which fields are empty or null
+            Log.d(TAG, "Item Name: " + itemName);
+            Log.d(TAG, "Description: " + description);
+            Log.d(TAG, "Address: " + selectedPlaceAddress);
+            Log.d(TAG, "Date: " + date);
+            if (user != null) {
+                Log.d(TAG, "User Email: " + userEmail);
+            } else {
+                Log.d(TAG, "User is null");
+            }
+            Log.d(TAG, "Image Path: " + localImagePath);
+
+
+
+            // Validate inputs, including the selected address
+            if (itemName.isEmpty() || description.isEmpty() || selectedPlaceAddress == null || selectedPlaceAddress.isEmpty() || date.isEmpty() || userEmail == null || localImagePath == null) {
+                Toast.makeText(requireContext(), "Please fill in all required fields and upload an image.", Toast.LENGTH_SHORT).show();
+                buttonPostItem.setEnabled(true); // Re-enable the button
+                return;
+            }
+
+
+
+            // Create the item with the selected address
+            LostAndFoundItem item = new LostAndFoundItem(userId, userName, itemName, description, selectedPlaceAddress, date, localImagePath, null);
+
+            // Generate the correct ID based on whether the item is lost or found
+            item.generateIdForStatus(isLost);
+
+            // Attempt to upload the image, which will then save the item if successful
+            uploadImageToFirebaseStorage(item);
+        });
+    }
 
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_post, container, false);
-        //databaseReference = FirebaseDatabase.getInstance().getReference("lost_and_found"); // Replace with your Firebase database reference
 
         // Initialize views
         radioGroupType = view.findViewById(R.id.radioGroupType);
@@ -87,6 +225,34 @@ public class PostFragment extends Fragment {
         buttonUploadImage = view.findViewById(R.id.buttonUploadImage);
         buttonPostItem = view.findViewById(R.id.buttonPostItem);
         imageViewUploaded = view.findViewById(R.id.imageViewUploaded);
+
+        Context context = getContext();
+        List<AutocompletePrediction> predictionList = new ArrayList<>();
+        editTextLocation = view.findViewById(R.id.editTextLocation);
+        recyclerViewLocationSuggestions = view.findViewById(R.id.recyclerViewLocationSuggestions);
+        recyclerViewLocationSuggestions.setLayoutManager(new LinearLayoutManager(getContext()));
+
+        // Set the adapter with the context, empty prediction list, editTextLocation, and recyclerViewLocationSuggestions
+        adapter = new AutocompletePredictionAdapter(
+                getContext(),
+                new ArrayList<>(),
+                editTextLocation,
+                recyclerViewLocationSuggestions
+        );
+
+        // Set the PredictionClickListener in the adapter
+        adapter.setPredictionClickListener(prediction -> {
+            Log.d(TAG, "Address selected: " + prediction.getFullText(null).toString());
+            editTextLocation.setText(prediction.getFullText(null).toString());
+            selectedPlaceAddress = prediction.getFullText(null).toString(); // Update your address variable
+            adapter.clearPredictions();
+            recyclerViewLocationSuggestions.setVisibility(View.GONE);
+        });
+
+
+        // Set the adapter to the RecyclerView
+        recyclerViewLocationSuggestions.setAdapter(adapter);
+
 
         // Listen for radio button selection
         radioGroupType.setOnCheckedChangeListener((group, checkedId) -> {
@@ -120,60 +286,34 @@ public class PostFragment extends Fragment {
 
 
 
-
-
         buttonUploadImage.setOnClickListener(v -> showImageSourceDialog());
+        buttonUploadImage.setOnClickListener(v -> checkStoragePermissionAndUpload());
+        buttonPostItem.setOnClickListener(v -> setupButtonPostItem());
 
         buttonPostItem.setEnabled(false);
 
-// Add TextChangedListeners to the required EditText fields
+
+        // Add TextChangedListeners to the required EditText fields
         editTextName.addTextChangedListener(textWatcher);
         editTextDescription.addTextChangedListener(textWatcher);
-        editTextLocation.addTextChangedListener(textWatcher);
         editTextDate.addTextChangedListener(textWatcher);
+        editTextLocation.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
 
-
-
-
-        // Add a click listener to the button
-        buttonPostItem.setOnClickListener(v -> {
-
-            // Disable the button to prevent multiple submissions
-            buttonPostItem.setEnabled(false);
-
-            String itemName = editTextName.getText().toString();
-            String description = editTextDescription.getText().toString();
-            String location = editTextLocation.getText().toString();
-            String date = editTextDate.getText().toString();
-
-            // You should retrieve the user's email from your authentication system here
-            FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-            if (user == null) {
-                Toast.makeText(requireContext(), "User is not logged in", Toast.LENGTH_SHORT).show();
-                buttonPostItem.setEnabled(true); // Re-enable the button
-                return;
-            }
-            String userEmail = user.getEmail();
-
-            // Validate inputs
-            if (itemName.isEmpty() || description.isEmpty() || location.isEmpty() || date.isEmpty() || userEmail == null || localImagePath == null) {
-                Toast.makeText(requireContext(), "Please fill in all required fields and upload an image.", Toast.LENGTH_SHORT).show();
-                buttonPostItem.setEnabled(true); // Re-enable the button
-                return;
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if (s.length() >= 3) { // Consider a delay here to avoid too many requests
+                    fetchPlaces(s.toString());
+                } else {
+                    // If the text is cleared or less than 3 characters, hide the suggestions
+                    recyclerViewLocationSuggestions.setVisibility(View.GONE);
+                }
             }
 
-            // Create the item without an image URL
-            String userId = user.getUid();
-            String userName = extractUserNameFromEmail(userEmail);
-            LostAndFoundItem item = new LostAndFoundItem(userId, userName, itemName, description, location, date, localImagePath, null);
-
-            // Generate the correct ID based on whether the item is lost or found
-            item.generateIdForStatus(isLost);
-
-            // Attempt to upload the image, which will then save the item if successful
-            uploadImageToFirebaseStorage(item);
+            @Override
+            public void afterTextChanged(Editable s) {}
         });
-
 
 
 
@@ -273,13 +413,8 @@ public class PostFragment extends Fragment {
                 startActivityForResult(intent, REQUEST_PICK_IMAGE);
             } else if (which == 1) {
                 // Capture image using the camera
-                Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                File imageFile = createImageFile();
-                if (imageFile != null) {
-                    localImagePath = imageFile.getAbsolutePath();
-                    intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(imageFile));
-                    startActivityForResult(intent, REQUEST_CAPTURE_IMAGE);
-                }
+                startCameraIntent();
+
             }
         });
         builder.show();
@@ -306,8 +441,39 @@ public class PostFragment extends Fragment {
             imageViewUploaded.setVisibility(View.VISIBLE);
             Picasso.get().load(new File(localImagePath)).into(imageViewUploaded);
         } else if (requestCode == REQUEST_CAPTURE_IMAGE) {
+            // Handle camera image
             imageViewUploaded.setVisibility(View.VISIBLE);
             Picasso.get().load(new File(localImagePath)).into(imageViewUploaded);
+        }
+
+        Context appContext = getActivity().getApplicationContext();
+        PlacesClient placesClient = Places.createClient(appContext);
+
+        // Handle the autocomplete result
+        if (requestCode == AUTOCOMPLETE_REQUEST_CODE) {
+            if (resultCode == Activity.RESULT_OK && data != null) {
+                Place place = Autocomplete.getPlaceFromIntent(data);
+                selectedPlaceAddress = place.getAddress();
+                editTextLocation.setText(place.getAddress());
+
+                LostAndFoundItem item = new LostAndFoundItem();
+                item.setAddress(place.getAddress());
+                if (place.getLatLng() != null) {
+                    item.setLatitude(place.getLatLng().latitude);
+                    item.setLongitude(place.getLatLng().longitude);
+                }
+                selectedPlaceAddress = place.getAddress();
+
+                // TODO: Save this item to your database
+                // This could be by passing the item to a method that performs the save operation,
+                // or by setting these values on an existing item object that will be saved later.
+                saveItemToFirestore(item);
+
+            } else if (resultCode == AutocompleteActivity.RESULT_ERROR) {
+                // TODO: Handle the error.
+                Status status = Autocomplete.getStatusFromIntent(data);
+                Log.e(TAG, "Error: Status = " + status);
+            }
         }
 
     }
@@ -358,10 +524,50 @@ public class PostFragment extends Fragment {
         }
     };
 
+    private void fetchPlaces(String query) {
+
+        // Make sure you include the necessary filters or restrictions for your autocomplete request
+        FindAutocompletePredictionsRequest request = FindAutocompletePredictionsRequest.builder()
+                .setQuery(query)
+                .setTypeFilter(TypeFilter.ADDRESS) // or any other filter you want
+                .build();
+
+        placesClient.findAutocompletePredictions(request).addOnSuccessListener((response) -> {
+            List<AutocompletePrediction> predictions = response.getAutocompletePredictions();
+            // Update the adapter with the new predictions and make the RecyclerView visible
+            adapter.updatePredictions(predictions);
+            adapter.notifyDataSetChanged();
+            recyclerViewLocationSuggestions.setVisibility(predictions.isEmpty() ? View.GONE : View.VISIBLE);
+        }).addOnFailureListener((exception) -> {
+            if (exception instanceof ApiException) {
+                ApiException apiException = (ApiException) exception;
+                Log.e(TAG, "Place not found: " + apiException.getStatusCode());
+                // Handle the error
+            }
+        });
+    }
+
+    private void startCameraIntent() {
+        Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        if (cameraIntent.resolveActivity(requireContext().getPackageManager()) != null) {
+            // Create the File where the photo should go
+            File photoFile = createImageFile();
+            if (photoFile != null) {
+                localImagePath = photoFile.getAbsolutePath();
+                Uri photoURI = FileProvider.getUriForFile(requireContext(),
+                        "com.ls.lostfound.fileprovider", // Adjust with your file provider authority
+                        photoFile);
+                cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
+                startActivityForResult(cameraIntent, REQUEST_CAPTURE_IMAGE);
+            }
+        }
+    }
+
+
+
 
 
 
 
 
 }
-

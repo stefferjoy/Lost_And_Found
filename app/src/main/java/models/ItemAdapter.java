@@ -73,6 +73,8 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemViewHolder
 
 
 
+
+
         // Set visibility and click listeners for edit and delete buttons
         if (isMyPosts == true) {
             holder.editButton.setVisibility(View.VISIBLE);

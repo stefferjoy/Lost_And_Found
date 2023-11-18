@@ -194,11 +194,19 @@ public class MyPostsFragment extends Fragment implements ItemAdapter.OnEditListe
         args.putString("ITEM_ID", item.getDocumentId()); // Pass the Document ID here
         editPostFragment.setArguments(args);
 
-        // Assuming you are within a FragmentActivity or similar context
+        editPostFragment.show(getChildFragmentManager(), editPostFragment.getTag());
+
+
+        // Show the EditPostFragment as a BottomSheetDialogFragment
+        //editPostFragment.show(getChildFragmentManager(), "editPost");
+
+       /* // Assuming you are within a FragmentActivity or similar context
         FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
         transaction.replace(R.id.container_my_posts, editPostFragment); // Use your container ID
         transaction.addToBackStack(null); // Add to back stack for navigation
         transaction.commit();
+
+        */
     }
 
 

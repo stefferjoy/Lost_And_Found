@@ -12,15 +12,6 @@
         android:padding="16dp"
         android:background="@color/white">
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/post"
-        android:gravity="center_horizontal"
-        android:textSize="24sp"
-        android:textStyle="bold"
-        android:textColor="@color/black"
-        android:layout_marginBottom="20dp" />
 
     <RadioGroup
         android:id="@+id/radioGroupType"
@@ -89,9 +80,19 @@
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/editTextLocation"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="50sp"
+            android:inputType="text"
+            android:completionThreshold="3"
             android:hint="Location" />
+
     </com.google.android.material.textfield.TextInputLayout>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerViewLocationSuggestions"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone" />
+
 
     <com.google.android.material.textfield.TextInputLayout
         android:layout_width="match_parent"

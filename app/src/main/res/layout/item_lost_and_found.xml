@@ -1,99 +1,109 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical"
-    android:padding="16dp">
+    android:layout_margin="8dp"
+    app:cardCornerRadius="8dp"
+    app:cardElevation="4dp"
+    app:cardUseCompatPadding="true">
 
-    <LinearLayout
-        android:id="@+id/itemContentLayout"
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:layout_toStartOf="@+id/editDeleteLayout">
+        android:padding="16dp">
 
+        <!-- Image, Title, and Description Layout -->
+        <LinearLayout
+            android:id="@+id/itemContentLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_toStartOf="@+id/editDeleteLayout">
 
-    <ImageView
-        android:id="@+id/imageViewItem"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
-        android:scaleType="fitCenter"
-        android:layout_marginTop="8dp"
-        android:src="@drawable/placeholder_image"
-        android:visibility="visible"/>
+            <ImageView
+                android:id="@+id/imageViewItem"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:scaleType="centerCrop"
+                android:src="@drawable/placeholder_image"
+                android:layout_marginBottom="8dp"/>
 
-    <TextView
-        android:id="@+id/textViewItemName"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Item Name"
-        android:textSize="18sp"
-        android:textColor="@android:color/black"
-        android:layout_marginBottom="8dp" />
+            <TextView
+                android:id="@+id/textViewItemName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Item Name"
+                android:textSize="18sp"
+                android:textColor="@android:color/black"
+                android:layout_marginBottom="4dp" />
 
-    <TextView
-        android:id="@+id/textViewItemDescription"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Item Description"
-        android:textSize="14sp"
-        android:textColor="@android:color/darker_gray"
-        android:layout_marginBottom="8dp" />
+            <TextView
+                android:id="@+id/textViewItemDescription"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Item Description"
+                android:textSize="14sp"
+                android:textColor="@android:color/darker_gray"
+                android:layout_marginBottom="4dp" />
 
-    <TextView
-        android:id="@+id/textViewItemLocation"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Item Location"
-        android:textSize="14sp"
-        android:textColor="@android:color/darker_gray"
-        android:layout_marginBottom="8dp" />
+            <!-- Additional Details Layout -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
 
-    <TextView
-        android:id="@+id/textViewItemDate"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Item Date"
-        android:textSize="14sp"
-        android:textColor="@android:color/darker_gray" />
+                <TextView
+                    android:id="@+id/textViewItemLocation"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Location"
+                    android:textSize="14sp"
+                    android:textColor="@android:color/darker_gray"
+                    android:layout_marginBottom="4dp" />
 
-    <!-- User ID TextView -->
-    <TextView
-        android:id="@+id/textViewUserName"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="User ID"
-        android:textSize="14sp"
-        android:textColor="@android:color/darker_gray" />
+                <TextView
+                    android:id="@+id/textViewItemDate"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Date"
+                    android:textSize="14sp"
+                    android:textColor="@android:color/darker_gray"
+                    android:layout_marginBottom="4dp" />
 
-    </LinearLayout>
-    <!-- Layout for Edit and Delete buttons -->
-    <LinearLayout
-        android:id="@+id/editDeleteLayout"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_alignParentEnd="true"
-        android:layout_centerVertical="true">
+                <TextView
+                    android:id="@+id/textViewUserName"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Username"
+                    android:textSize="14sp"
+                    android:textColor="@android:color/darker_gray" />
+            </LinearLayout>
+        </LinearLayout>
 
-        <!-- Edit Button -->
-        <ImageView
-            android:id="@+id/editButton"
+        <!-- Edit and Delete Buttons -->
+        <LinearLayout
+            android:id="@+id/editDeleteLayout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@android:drawable/ic_menu_edit"
-            android:contentDescription="@string/edit"
-            android:layout_marginEnd="8dp"/>
+            android:orientation="horizontal"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true">
 
-        <!-- Delete Button -->
-        <ImageView
-            android:id="@+id/deleteButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@android:drawable/ic_delete"
-            android:contentDescription="@string/delete"/>
-    </LinearLayout>
+            <ImageView
+                android:id="@+id/editButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@android:drawable/ic_menu_edit"
+                android:contentDescription="@string/edit"
+                android:layout_marginEnd="8dp"/>
 
-</RelativeLayout>
-
+            <ImageView
+                android:id="@+id/deleteButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@android:drawable/ic_menu_delete"
+                android:contentDescription="@string/delete"/>
+        </LinearLayout>
+    </RelativeLayout>
+</androidx.cardview.widget.CardView>

@@ -8,10 +8,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.material.bottomsheet.BottomSheetBehavior;
+import com.google.android.material.bottomsheet.BottomSheetDialog;
+import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.ls.lostfound.R;
 
@@ -26,7 +30,7 @@ import models.LostAndFoundItem;
 import static androidx.constraintlayout.widget.ConstraintLayoutStates.TAG;
 
 
-public class EditPostFragment extends Fragment {
+public class EditPostFragment extends BottomSheetDialogFragment {
 
     private EditText editTextItemName, editTextItemDescription, editTextLocation, editTextItemDate;
     private Button buttonSave;
@@ -36,6 +40,23 @@ public class EditPostFragment extends Fragment {
 
     public EditPostFragment() {
         // Required empty public constructor
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+    }
+
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        BottomSheetDialog dialog = (BottomSheetDialog) getDialog();
+        if (dialog != null) {
+            FrameLayout bottomSheet = dialog.findViewById(com.google.android.material.R.id.design_bottom_sheet);
+            BottomSheetBehavior<FrameLayout> behavior = BottomSheetBehavior.from(bottomSheet);
+            // Set behavior such as state and peek height here
+        }
     }
 
     @Override

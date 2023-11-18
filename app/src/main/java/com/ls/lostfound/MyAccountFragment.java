@@ -23,6 +23,7 @@ import models.LostAndFoundItem;
 import myAccount.MyAccountAdapter;
 import myAccount.MyAccountListItem;
 import myAccount.MyPostsFragment;
+import myAccount.MyProfileFragment;
 
 
 public class MyAccountFragment extends Fragment {
@@ -78,7 +79,7 @@ public class MyAccountFragment extends Fragment {
         List<MyAccountListItem> items = new ArrayList<>();
         items.add(new MyAccountListItem(R.drawable.account_icon, "My Profile"));
         items.add(new MyAccountListItem(R.drawable.edit_post_icon, "My Posts"));
-        items.add(new MyAccountListItem(R.drawable.edit_image_icon, "Change Profile Photo"));
+        items.add(new MyAccountListItem(R.drawable.edit_image_icon, "Contact Us"));
 
         // Create the adapter and set it to the RecyclerView
         MyAccountAdapter adapter = new MyAccountAdapter(items);
@@ -89,9 +90,12 @@ public class MyAccountFragment extends Fragment {
             @Override
             public void onItemClick(int position) {
                 Log.d(TAG, "Item clicked at position: " + position);
-                if (position == 1) { // Check if the "My Posts" item was clicked
-                    openMyPostsFragment(); // Open the MyPostsFragment
+                if (position == 0) {
+                    openMyProfileFragment();
+                } else if (position == 1) {
+                    openMyPostsFragment();
                 }
+                //
             }
         });
 
@@ -106,6 +110,14 @@ public class MyAccountFragment extends Fragment {
         FragmentTransaction transaction = getParentFragmentManager().beginTransaction();
         transaction.replace(R.id.container_my_account, myPostsFragment); // Use the correct container ID
         transaction.addToBackStack(null); // Add to the back stack if needed
+        transaction.commit();
+    }
+    public void openMyProfileFragment() {
+        MyProfileFragment myProfileFragment = new MyProfileFragment();
+
+        FragmentTransaction transaction = getParentFragmentManager().beginTransaction();
+        transaction.replace(R.id.container_my_account, myProfileFragment);
+        transaction.addToBackStack(null);
         transaction.commit();
     }
 }
