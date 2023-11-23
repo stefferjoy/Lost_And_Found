@@ -1,4 +1,4 @@
-package com.ls.lostfound;
+package com.ls.lostfound.userdetails;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -18,7 +18,8 @@ import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-
+import com.ls.lostfound.MainActivity;
+import com.ls.lostfound.R;
 
 public class Register extends AppCompatActivity {
 
@@ -89,7 +90,8 @@ public class Register extends AppCompatActivity {
                                     progressBar.setVisibility(View.GONE);
                                     Toast.makeText( Register.this, "Account created!",
                                             Toast.LENGTH_SHORT).show();
-                                    Intent intent = new Intent(getApplicationContext(), Login.class);
+                                    // Redirect to OnboardingActivity instead of Login
+                                    Intent intent = new Intent(getApplicationContext(), OnboardingActivity.class);
                                     startActivity(intent);
                                     finish();
 

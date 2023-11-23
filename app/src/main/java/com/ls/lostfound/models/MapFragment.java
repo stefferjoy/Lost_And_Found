@@ -1,6 +1,6 @@
 
 
-package models;
+package com.ls.lostfound.models;
 
 import android.annotation.SuppressLint;
 

@@ -1,4 +1,4 @@
-package myAccount;
+package com.ls.lostfound.myAccount;
 
 import android.app.DatePickerDialog;
 import android.os.Bundle;
@@ -10,7 +10,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ProgressBar;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
@@ -24,8 +23,7 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
-import androidx.fragment.app.Fragment;
-import models.LostAndFoundItem;
+import com.ls.lostfound.models.LostAndFoundItem;
 
 import static androidx.constraintlayout.widget.ConstraintLayoutStates.TAG;
 

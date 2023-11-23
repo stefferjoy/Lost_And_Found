@@ -1,4 +1,4 @@
-package models.RecyclerView;
+package com.ls.lostfound.models.RecyclerView;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -6,13 +6,13 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 import com.ls.lostfound.R;
+import com.ls.lostfound.models.LostAndFoundItem;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
-import models.LostAndFoundItem;
 
 public class LostAndFoundAdapter extends RecyclerView.Adapter<LostAndFoundAdapter.LostAndFoundItemViewHolder> {
 

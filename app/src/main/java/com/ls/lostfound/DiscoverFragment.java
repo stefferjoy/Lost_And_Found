@@ -24,13 +24,12 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
-import com.ls.lostfound.R;
+
 import java.util.ArrayList;
 import java.util.List;
-import models.LostAndFoundItem;
-import models.ItemAdapter;
-import models.SearchAdapter;
+import com.ls.lostfound.models.LostAndFoundItem;
+import com.ls.lostfound.models.ItemAdapter;
+import com.ls.lostfound.models.SearchAdapter;
 public class DiscoverFragment extends Fragment implements ItemAdapter.OnDeleteListener, ItemAdapter.OnEditListener,OnMapReadyCallback {
     private List<LostAndFoundItem> itemList = new ArrayList<>();
     private List<LostAndFoundItem> listOfItems; // Your list of items
@@ -50,6 +49,7 @@ public class DiscoverFragment extends Fragment implements ItemAdapter.OnDeleteLi
     private SupportMapFragment mapFragment;
     private FloatingActionButton fabShowMap;
     private boolean isMapVisible = false;
+    private DiscoverFragment discoverFragment;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -193,5 +193,30 @@ public class DiscoverFragment extends Fragment implements ItemAdapter.OnDeleteLi
     @Override
     public void onDeleteClicked(LostAndFoundItem item) {
 
+    }
+    @Override
+    public void onStop() {
+        super.onStop();
+        // Call onStop method in your Fragment
+        if (discoverFragment != null) {
+            discoverFragment.onStop();
+        }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        // Call onResume method in your Fragment
+        if (discoverFragment != null) {
+            discoverFragment.onResume();
+        }
+    }
+    @Override
+    public void onPause() {
+        super.onPause();
+        // Call onPause method in your Fragment
+        if (discoverFragment != null) {
+            discoverFragment.onPause();
+        }
     }
 }

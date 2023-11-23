@@ -26,8 +26,6 @@ import android.Manifest;
 
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.common.api.Status;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.libraries.places.api.Places;
 import com.google.android.libraries.places.api.model.AutocompletePrediction;
 import com.google.android.libraries.places.api.model.Place;
@@ -39,8 +37,6 @@ import com.google.android.libraries.places.widget.AutocompleteActivity;
 import com.google.android.libraries.places.widget.model.AutocompleteActivityMode;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
@@ -56,19 +52,21 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
-import androidx.annotation.NonNull;
+
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import models.AutocompletePredictionAdapter;
-import models.LostAndFoundItem;
+import com.ls.lostfound.models.AutocompletePredictionAdapter;
+import com.ls.lostfound.models.LostAndFoundItem;
 
 public class PostFragment extends Fragment {
 
     private static final String TAG = "DiscoverFragment";
+
+    private PostFragment postFragment;
 
 
     private static final int REQUEST_PICK_IMAGE = 1;
@@ -88,7 +86,7 @@ public class PostFragment extends Fragment {
 
     //    private DatabaseReference databaseReference;
     FirebaseFirestore db = FirebaseFirestore.getInstance();
-    private static final int REQUEST_PERMISSION_CODE = 1; //
+    private static final int REQUEST_PERMISSION_CODE = 1;
 
     private PlacesClient placesClient;
 
@@ -109,6 +107,34 @@ public class PostFragment extends Fragment {
         adapter.clearPredictions();
         recyclerViewLocationSuggestions.setVisibility(View.GONE);
 
+    }
+
+
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        // Call onStop method in your Fragment
+        if (postFragment != null) {
+            postFragment.onStop();
+        }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        // Call onResume method in your Fragment
+        if (postFragment != null) {
+            postFragment.onResume();
+        }
+    }
+    @Override
+    public void onPause() {
+        super.onPause();
+        // Call onPause method in your Fragment
+        if (postFragment != null) {
+            postFragment.onPause();
+        }
     }
 
     @Override
@@ -565,9 +591,5 @@ public class PostFragment extends Fragment {
 
 
 
-
-
-
-
-
 }
+

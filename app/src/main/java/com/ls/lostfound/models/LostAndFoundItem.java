@@ -1,4 +1,4 @@
-package models;
+package com.ls.lostfound.models;
 
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;

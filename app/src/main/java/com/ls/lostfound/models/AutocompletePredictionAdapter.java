@@ -1,4 +1,4 @@
-package models;
+package com.ls.lostfound.models;
 
 import android.content.Context;
 import android.view.LayoutInflater;

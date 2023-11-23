@@ -1,4 +1,4 @@
-package models;
+package com.ls.lostfound.models;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,7 +15,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 import java.util.List;
-import com.ls.lostfound.PostFragment;
+
 import com.squareup.picasso.Picasso;
 
 public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ViewHolder> implements Filterable {

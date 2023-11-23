@@ -1,6 +1,6 @@
 
 package com.ls.lostfound;
-import android.app.FragmentManager;
+import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -13,17 +13,20 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import models.LostAndFoundItem;
-import myAccount.MyAccountAdapter;
-import myAccount.MyAccountListItem;
-import myAccount.MyPostsFragment;
-import myAccount.MyProfileFragment;
+import com.ls.lostfound.models.LostAndFoundItem;
+import com.ls.lostfound.myAccount.MyAccountAdapter;
+import com.ls.lostfound.myAccount.MyAccountListItem;
+import com.ls.lostfound.myAccount.MyPostsFragment;
+import com.ls.lostfound.myAccount.MyProfileFragment;
+import com.ls.lostfound.userdetails.Login;
 
 
 public class MyAccountFragment extends Fragment {
@@ -33,6 +36,11 @@ public class MyAccountFragment extends Fragment {
     Button button;
     TextView textView;
     FirebaseUser user;
+
+    public MyAccountFragment() {
+        // Required empty public constructor
+    }
+
 
 
     private List<LostAndFoundItem> userPostsList;
@@ -55,6 +63,7 @@ public class MyAccountFragment extends Fragment {
         } else {
             textView.setText(user.getEmail());
         }
+
 
         button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -102,25 +111,97 @@ public class MyAccountFragment extends Fragment {
 
         return rootView;
     }
+    @Override
+    public void onResume() {
+        super.onResume();
+        // Perform actions when the fragment becomes visible
+    }
 
+    @Override
+    public void onPause() {
+        super.onPause();
+        // Add code here to handle actions when MyAccountFragment is paused
+    }
+    @Override
+    public void onStop() {
+        super.onStop();
+        // Add code here to handle actions when MyAccountFragment is paused
+    }
+
+
+    public void openMyProfileFragment() {
+        // Pause MyAccountFragment
+        onPause();
+
+        // Clear any existing fragments that might be in the container to prevent overlapping
+        FragmentTransaction transaction = getParentFragmentManager().beginTransaction();
+
+        // Check if an instance of MyProfileFragment already exists
+        MyProfileFragment existingFragment = (MyProfileFragment) getParentFragmentManager().findFragmentByTag("MyProfileFragment");
+
+        if (existingFragment != null) {
+            // If it exists, show the existing fragment
+            transaction.show(existingFragment);
+        } else {
+            // If it doesn't exist, create a new instance and add it
+            MyProfileFragment myProfileFragment = new MyProfileFragment();
+            transaction.replace(R.id.container_my_account, myProfileFragment, "MyProfileFragment");
+        }
+
+        transaction.addToBackStack(null); // Add transaction to the back stack if needed
+        transaction.commit(); // Commit the transaction
+    }
 
     public void openMyPostsFragment() {
+        // Pause MyAccountFragment
+        onPause();
+
+        // Clear the back stack to prevent fragment overlap
+        clearBackStack();
+
+        // Begin the transaction
+        FragmentTransaction transaction = getParentFragmentManager().beginTransaction();
+
+        // Create new instance of MyPostsFragment
         MyPostsFragment myPostsFragment = new MyPostsFragment();
 
-        FragmentTransaction transaction = getParentFragmentManager().beginTransaction();
-        transaction.replace(R.id.container_my_account, myPostsFragment); // Use the correct container ID
-        transaction.addToBackStack(null); // Add to the back stack if needed
-        transaction.commit();
-    }
-    public void openMyProfileFragment() {
-        MyProfileFragment myProfileFragment = new MyProfileFragment();
+        // Replace the container with MyPostsFragment
+        transaction.replace(R.id.container_my_account, myPostsFragment);
 
-        FragmentTransaction transaction = getParentFragmentManager().beginTransaction();
-        transaction.replace(R.id.container_my_account, myProfileFragment);
+        // Optional: Add the transaction to the back stack
         transaction.addToBackStack(null);
-        transaction.commit();
+
+        // Commit the transaction
+        transaction.commitAllowingStateLoss();
+
+        // Log current fragments for debugging
+        logCurrentFragments();
+
+        // Ensure the UI is updated
+        getParentFragmentManager().executePendingTransactions();
     }
+
+
+    private void clearBackStack() {
+        FragmentManager fragmentManager = getParentFragmentManager();
+        fragmentManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+    }
+
+
+
+    private void logCurrentFragments() {
+        for (Fragment frag : getParentFragmentManager().getFragments()) {
+            Log.d(TAG, "Current Fragment: " + frag.toString());
+        }
+    }
+
+
 }
+
+
+
+
+
 
 
 

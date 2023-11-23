@@ -1,19 +1,16 @@
-package myAccount;
+package com.ls.lostfound.myAccount;
 
-import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentTransaction;
-import models.LostAndFoundItem;
 
-import android.os.Bundle;
+import com.ls.lostfound.models.LostAndFoundItem;
+
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -26,7 +23,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 import com.ls.lostfound.R;
-import models.ItemAdapter; // Replace with the actual adapter for your items
+import com.ls.lostfound.models.ItemAdapter; // Replace with the actual adapter for your items
 
 import java.util.ArrayList;
 import java.util.List;

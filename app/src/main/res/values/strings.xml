@@ -35,4 +35,13 @@
     <string name="enter_old_password">Enter Old password</string>
     <string name="create_new_password_text">Create New Password</string>
     <string name="save">Save</string>
+    <string name="phone_number">Phone Number</string>
+    <string name="username">Username</string>
+    <string name="name">Name</string>
+    <string name="e_mail_id">E-mail ID</string>
+    <string name="password_acc">Password</string>
+    <string name="change">Change</string>
+    <string name="pass_symbol">**********</string>
+    <string name="proceed">Proceed</string>
+    <string name="message_last_page"><![CDATA[You\'re ready to use Lost&Found!]]></string>
 </resources>

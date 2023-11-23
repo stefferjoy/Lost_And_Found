@@ -2,20 +2,14 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
-
     <uses-feature
         android:name="android.hardware.camera"
         android:required="true" />
 
-    <uses-permission android:name="android.permission.INTERNET"/>
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
-    <uses-permission android:name="android.permission.CAMERA"/>
 
-
-
-
-
-
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.CAMERA" />
 
     <application
         android:allowBackup="true"
@@ -27,36 +21,35 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Material3.Light.NoActionBar"
         tools:targetApi="31">
-        <activity android:name=".SplashActivity"
+        <activity
+            android:name=".userdetails.OnboardingActivity"
+            android:exported="false" />
+        <activity
+            android:name=".SplashActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <activity
-            android:name=".Register"
-            android:exported="true">
-        </activity>
+            android:name=".userdetails.Register"
+            android:exported="true"></activity>
         <activity
-        android:name=".Login"
-            android:exported="true">
-    </activity>
+            android:name=".userdetails.Login"
+            android:exported="true"></activity>
         <activity
             android:name=".MainActivity"
             android:exported="true"
-            android:windowSoftInputMode="adjustResize"
-            android:theme="@style/ThemeOverlay.LostFound.FullscreenContainer">
-
-        >
-        </activity>
-
+            android:theme="@style/ThemeOverlay.LostFound.FullscreenContainer"
+            android:windowSoftInputMode="adjustResize">
+            </activity>
 
 
         <meta-data
             android:name="preloaded_fonts"
             android:resource="@array/preloaded_fonts" />
-
 
         <provider
             android:name="androidx.core.content.FileProvider"
@@ -68,12 +61,9 @@
                 android:resource="@xml/file_paths" />
         </provider>
 
-
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="${PLACES_API_KEY}" />
-
-
     </application>
 
 </manifest>
