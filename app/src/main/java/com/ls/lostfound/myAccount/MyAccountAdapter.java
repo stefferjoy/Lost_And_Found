@@ -1,4 +1,4 @@
-package myAccount;
+package com.ls.lostfound.myAccount;
 
 import android.view.LayoutInflater;
 import android.view.View;

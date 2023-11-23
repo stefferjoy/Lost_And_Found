@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/container_my_account"
     android:orientation="vertical">
 
 
@@ -11,15 +13,16 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/my_account"
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/profile_image"
+            android:layout_width="120dp"
+            android:layout_height="120dp"
             android:layout_gravity="center"
-            android:textSize="24sp"
-            android:textColor="@android:color/black"
-            android:layout_marginTop="16dp"
-            android:layout_marginBottom="16dp" />
+            android:layout_marginTop="10sp"
+            android:src="@drawable/baseline_account_circle_gray_24"
+            app:civ_border_width="2dp"
+            app:civ_border_color="@color/white"/>
 
         <RelativeLayout
             android:layout_width="wrap_content"
@@ -29,6 +32,8 @@
                 android:id="@+id/user_details"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:textSize="20sp"
+                android:textStyle="bold"
                 />
 
         </RelativeLayout>
@@ -40,6 +45,8 @@
             android:id="@+id/recyclerViewMyAccount"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:textSize="20sp"
+            android:textStyle="bold"
             android:layout_marginLeft="20dp"
             android:layout_marginRight="20dp"
             android:clickable="true"
@@ -64,9 +71,6 @@
             android:contentDescription="@string/navigation_tabs" />
 
     </LinearLayout>
-    <FrameLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:id="@+id/container_my_account"/>
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+
+</FrameLayout>

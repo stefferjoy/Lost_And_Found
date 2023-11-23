@@ -3,10 +3,10 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/boxcolor"
+    android:id="@+id/container_discover"
     android:orientation="vertical">
 
-    <!-- Search EditText -->
+
 
 
     <EditText
@@ -59,6 +59,23 @@
     </FrameLayout>
 
 
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/chatButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Chat"
+        android:layout_marginStart="@dimen/fab_margin"
+        android:layout_marginTop="@dimen/fab_margin"
+        android:layout_marginEnd="@dimen/fab_margin"
+        android:layout_marginBottom="@dimen/fab_margin"        android:background="@drawable/baseline_chat_bubble_24"
+        android:textColor="#FFFFFF"
+        android:textSize="16sp"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        android:layout_alignParentEnd="true"
+        android:src="@drawable/baseline_chat_bubble_24"
+        android:layout_above="@id/fab_show_map"/>
+
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fab_show_map"
@@ -70,6 +87,7 @@
         android:layout_margin="@dimen/fab_margin"
     android:src="@drawable/baseline_streetview_24"
     android:contentDescription="show_map" />
+
 
 
     <com.google.android.material.tabs.TabLayout

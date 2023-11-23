@@ -1,4 +1,4 @@
-package myAccount;
+package com.ls.lostfound.myAccount;
 
 
 public class MyAccountListItem {

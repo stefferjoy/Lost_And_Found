@@ -1,4 +1,4 @@
-package models.RecyclerView;
+package com.ls.lostfound.models.RecyclerView;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -6,21 +6,38 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 import com.ls.lostfound.R;
+import com.ls.lostfound.models.LostAndFoundItem;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
-import models.LostAndFoundItem;
 
 public class LostAndFoundAdapter extends RecyclerView.Adapter<LostAndFoundAdapter.LostAndFoundItemViewHolder> {
+
+    public interface OnItemClickListener {
+        void onItemClick(int position);
+    }
+
+    private OnItemClickListener listener;
+
+    public void setOnItemClickListener(OnItemClickListener listener) {
+        this.listener = listener;
+    }
 
     private List<LostAndFoundItem> itemList;
 
     public LostAndFoundAdapter(List<LostAndFoundItem> itemList) {
         this.itemList = itemList;
     }
+
+    private OnChatButtonClickListener chatButtonListener;
+
+    public void setOnChatButtonClickListener(OnChatButtonClickListener listener) {
+        this.chatButtonListener = listener;
+    }
+
 
     @NonNull
     @Override
@@ -48,6 +65,15 @@ public class LostAndFoundAdapter extends RecyclerView.Adapter<LostAndFoundAdapte
                 holder.imageViewItem.setImageResource(R.drawable.placeholder_image);
             }
         }
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (listener != null) {
+                    listener.onItemClick(position);
+                }
+            }
+        });
+
     }
 
     @Override
@@ -69,4 +95,8 @@ public class LostAndFoundAdapter extends RecyclerView.Adapter<LostAndFoundAdapte
             imageViewItem = itemView.findViewById(R.id.imageViewItem);
         }
     }
+    public interface OnChatButtonClickListener {
+        void onChatButtonClick(String userId);
+    }
+
 }

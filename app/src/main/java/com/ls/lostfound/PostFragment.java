@@ -7,6 +7,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
+import android.location.Address;
+import android.location.Geocoder;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -26,8 +28,7 @@ import android.Manifest;
 
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.common.api.Status;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.maps.model.LatLng;
 import com.google.android.libraries.places.api.Places;
 import com.google.android.libraries.places.api.model.AutocompletePrediction;
 import com.google.android.libraries.places.api.model.Place;
@@ -39,13 +40,15 @@ import com.google.android.libraries.places.widget.AutocompleteActivity;
 import com.google.android.libraries.places.widget.model.AutocompleteActivityMode;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+import com.ls.lostfound.notification.NotificationAdapter;
+import com.ls.lostfound.notification.NotificationItem;
 import com.squareup.picasso.Picasso;
 import java.io.File;
 import java.io.IOException;
@@ -56,39 +59,33 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
-import androidx.annotation.NonNull;
+
+import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import models.AutocompletePredictionAdapter;
-import models.LostAndFoundItem;
+import com.ls.lostfound.models.AutocompletePredictionAdapter;
+import com.ls.lostfound.models.LostAndFoundItem;
 
 public class PostFragment extends Fragment {
 
-    private static final String TAG = "DiscoverFragment";
-
-
+    private static final String TAG = "PostFragment";
+    private PostFragment postFragment;
     private static final int REQUEST_PICK_IMAGE = 1;
     private static final int REQUEST_CAPTURE_IMAGE = 2;
     private String localImagePath; // Store the local file path of the selected image
     private String firebaseImageUrl; // Store the Firebase Storage image URL
-
-
     private RadioGroup radioGroupType;
     private EditText editTextName, editTextDescription, editTextLocation, editTextDate;
     private String selectedPlaceAddress = ""; // Initialize with empty string
-
     private Button buttonUploadImage, buttonPostItem;
     private ImageView imageViewUploaded;
-
     private boolean isLost = true;
-
-    //    private DatabaseReference databaseReference;
     FirebaseFirestore db = FirebaseFirestore.getInstance();
-    private static final int REQUEST_PERMISSION_CODE = 1; //
+    private static final int REQUEST_PERMISSION_CODE = 1;
 
     private PlacesClient placesClient;
 
@@ -96,25 +93,55 @@ public class PostFragment extends Fragment {
 
     private static final int AUTOCOMPLETE_REQUEST_CODE = 3; // Choose an arbitrary request code value
 
-
-
     private AutocompletePredictionAdapter adapter;
     private RecyclerView recyclerViewLocationSuggestions;
+    private double latitude;
+    private double longitude;
+    private List<NotificationItem> notificationList;
+    private NotificationAdapter notificationAdapter;
 
-    // This function is called when an item from the autocomplete predictions is clicked
-    private void onPredictionClicked(AutocompletePrediction prediction) {
-        editTextLocation.setText(prediction.getFullText(null).toString());
-        selectedPlaceAddress = prediction.getPrimaryText(null).toString();
-        // Clear the predictions and hide the RecyclerView
-        adapter.clearPredictions();
-        recyclerViewLocationSuggestions.setVisibility(View.GONE);
+    private OnNewPostListener onNewPostListener;
 
+    public void setOnNewPostListener(OnNewPostListener listener) {
+        this.onNewPostListener = listener;
+    }
+
+
+
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        // Call onStop method in your Fragment
+        if (postFragment != null) {
+            postFragment.onStop();
+        }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        // Call onResume method in your Fragment
+        if (postFragment != null) {
+            postFragment.onResume();
+        }
+    }
+    @Override
+    public void onPause() {
+        super.onPause();
+        // Call onPause method in your Fragment
+        if (postFragment != null) {
+            postFragment.onPause();
+        }
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        // Initialize the list and the adapter
+        notificationList = new ArrayList<>();
+        notificationAdapter = new NotificationAdapter(notificationList);
 
 
         // Initialize the Places SDK
@@ -141,8 +168,6 @@ public class PostFragment extends Fragment {
         // Add a click listener to the button
         buttonPostItem.setOnClickListener(v -> {
 
-            // Disable the button to prevent multiple submissions
-            buttonPostItem.setEnabled(false);
 
             String itemName = editTextName.getText().toString();
             String description = editTextDescription.getText().toString();
@@ -164,17 +189,6 @@ public class PostFragment extends Fragment {
             String userId = user.getUid();
             String userName = extractUserNameFromEmail(userEmail);
 
-            // Check if the selectedPlaceAddress is set (not empty)
-            if (selectedPlaceAddress.isEmpty()) {
-                // If not, show a toast, re-enable the button and return
-                Toast.makeText(getContext(), "Please select an address", Toast.LENGTH_SHORT).show();
-                buttonPostItem.setEnabled(true); // Re-enable the button
-                return;
-            }
-            // Disable the button to prevent multiple submissions
-            buttonPostItem.setEnabled(false);
-
-
 
 
             // Add log statements to check which fields are empty or null
@@ -190,24 +204,40 @@ public class PostFragment extends Fragment {
             Log.d(TAG, "Image Path: " + localImagePath);
 
 
-
-            // Validate inputs, including the selected address
-            if (itemName.isEmpty() || description.isEmpty() || selectedPlaceAddress == null || selectedPlaceAddress.isEmpty() || date.isEmpty() || userEmail == null || localImagePath == null) {
-                Toast.makeText(requireContext(), "Please fill in all required fields and upload an image.", Toast.LENGTH_SHORT).show();
-                buttonPostItem.setEnabled(true); // Re-enable the button
+            if (radioGroupType == null) {
+                Toast.makeText(requireContext(),"Please Select Lost ot Found",Toast.LENGTH_SHORT).show();
+                // Validate inputs, including the selected address
+                if (itemName.isEmpty() || description.isEmpty() || selectedPlaceAddress == null || selectedPlaceAddress.isEmpty() || date.isEmpty() || userEmail == null || localImagePath == null ) {
+                    Toast.makeText(requireContext(), "Please fill in all required fields and upload an image.", Toast.LENGTH_SHORT).show();
+                    buttonPostItem.setEnabled(true);// Re-enable the button
+                    if (selectedPlaceAddress.isEmpty()) {
+                        // If not, show a toast, re-enable the button and return
+                        Toast.makeText(getContext(), "Please select an address", Toast.LENGTH_SHORT).show();
+                        buttonPostItem.setEnabled(true); // Re-enable the button
+                        return;
+                    }
+                    return;
+                }
                 return;
             }
 
 
 
+            // Check if the selectedPlaceAddress is set (not empty)
+
+            saveLatLngFromAddress(selectedPlaceAddress, userId, userName, itemName, description, date, localImagePath);
+
+
+
             // Create the item with the selected address
-            LostAndFoundItem item = new LostAndFoundItem(userId, userName, itemName, description, selectedPlaceAddress, date, localImagePath, null);
+            LostAndFoundItem item = new LostAndFoundItem(userId, userName, itemName, description, selectedPlaceAddress, date, localImagePath, null, latitude, longitude);
+
 
             // Generate the correct ID based on whether the item is lost or found
             item.generateIdForStatus(isLost);
 
             // Attempt to upload the image, which will then save the item if successful
-            uploadImageToFirebaseStorage(item);
+            //uploadImageToFirebaseStorage(item);
         });
     }
 
@@ -245,8 +275,10 @@ public class PostFragment extends Fragment {
             Log.d(TAG, "Address selected: " + prediction.getFullText(null).toString());
             editTextLocation.setText(prediction.getFullText(null).toString());
             selectedPlaceAddress = prediction.getFullText(null).toString(); // Update your address variable
+            // Clear the adapter and hide the suggestions list
             adapter.clearPredictions();
-            recyclerViewLocationSuggestions.setVisibility(View.GONE);
+            adapter.notifyDataSetChanged(); // Notify the adapter to refresh the list
+            recyclerViewLocationSuggestions.setVisibility(View.GONE); // Hide the RecyclerView
         });
 
 
@@ -285,13 +317,14 @@ public class PostFragment extends Fragment {
         });
 
 
-
+        //buttonUploadImage.setOnClickListener(v -> checkStoragePermissionAndUpload());
         buttonUploadImage.setOnClickListener(v -> showImageSourceDialog());
-        buttonUploadImage.setOnClickListener(v -> checkStoragePermissionAndUpload());
         buttonPostItem.setOnClickListener(v -> setupButtonPostItem());
+
 
         buttonPostItem.setEnabled(false);
 
+        //setOnNewPostListener();
 
         // Add TextChangedListeners to the required EditText fields
         editTextName.addTextChangedListener(textWatcher);
@@ -316,9 +349,13 @@ public class PostFragment extends Fragment {
         });
 
 
+        getLatLngFromAddress(selectedPlaceAddress);
+        setupNotificationsListener();
 
         return view;
     }
+
+
     private void checkStoragePermissionAndUpload() {
         // Check if permission is already granted
         if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE)
@@ -387,11 +424,21 @@ public class PostFragment extends Fragment {
         // Now save the item to Firestore using the set() method
         newDocRef.set(item)
                 .addOnSuccessListener(aVoid -> {
-                    Toast.makeText(requireContext(), "Item posted successfully!", Toast.LENGTH_SHORT).show();
-                    buttonPostItem.setEnabled(true); // Re-enable the button after successful post
+                    // Notify listener if not null
 
-                    // If you need to do something with the item after it's saved, do it here
-                    // For example, you could add it to an adapter or update the UI
+                    if (onNewPostListener != null) {
+                        onNewPostListener.onNewPost(item);
+                    }
+                    Toast.makeText(requireContext(), "Item posted successfully!", Toast.LENGTH_SHORT).show();
+
+
+                    buttonPostItem.setEnabled(false); // Re-enable the button after successful post
+
+                    clearFormField();
+
+                    buttonPostItem.setEnabled(true); // Re-enable the button if the post fails
+
+
                 })
                 .addOnFailureListener(e -> {
                     Toast.makeText(requireContext(), "Failed to post item: " + e.getMessage(), Toast.LENGTH_SHORT).show();
@@ -399,6 +446,20 @@ public class PostFragment extends Fragment {
                 });
     }
 
+    private void clearFormField(){
+        // Clear all the fields here
+        editTextName.setText("");
+        editTextDescription.setText("");
+        editTextLocation.setText("");
+        editTextDate.setText("");
+        imageViewUploaded.setImageResource(android.R.color.transparent); // Assuming you want to clear the image
+        selectedPlaceAddress = ""; // Reset the selected address
+        localImagePath = ""; // Reset the path of the uploaded image
+        firebaseImageUrl = ""; // Reset the Firebase image URL
+        radioGroupType.clearCheck(); // Clear the selected radio button
+        // You might also want to reset any other states or selections that were made
+
+    }
 
 
 
@@ -563,11 +624,88 @@ public class PostFragment extends Fragment {
         }
     }
 
+    public interface OnNewPostListener {
+        void onNewPost(LostAndFoundItem newItem);
+    }
 
+    public LatLng getLatLngFromAddress(String address) {
+        if (address == null || address.isEmpty()) {
+            Log.e("GeocoderError", "Address is null or empty");
+            return null; // or some default LatLng
+        }
 
+        Geocoder geocoder = new Geocoder(getContext());
+        try {
+            List<Address> addresses = geocoder.getFromLocationName(address, 1);
+            if (addresses != null && !addresses.isEmpty()) {
+                Address location = addresses.get(0);
+                return new LatLng(location.getLatitude(), location.getLongitude());
+            } else {
+                Log.e("GeocoderError", "No location found for address: " + address);
+                return null; // or some default LatLng
+            }
+        } catch (IOException e) {
+            Log.e("GeocoderError", "Geocoder failed", e);
+            return null; // or some default LatLng
+        }
+    }
 
+    private void saveLatLngFromAddress(final String address, final String userId, final String userName, final String itemName, final String description, final String date, final String localImagePath) {
+        new Thread(() -> {
+            Geocoder geocoder = new Geocoder(getContext());
+            try {
+                List<Address> addressList = geocoder.getFromLocationName(address, 1);
+                Log.d(TAG, "Geocoder results count: " + addressList.size());
 
+                if (!addressList.isEmpty()) {
+                    Address location = addressList.get(0);
+                    double latitude = location.getLatitude();
+                    double longitude = location.getLongitude();
+
+                    Log.d(TAG, "Geocoded latitude: " + latitude + ", longitude: " + longitude);
+
+                    getActivity().runOnUiThread(() -> {
+                        // Create the LostAndFoundItem here with updated latitude and longitude
+                        LostAndFoundItem item = new LostAndFoundItem(userId, userName, itemName, description, address, date, localImagePath, null, latitude, longitude);
+                        uploadImageToFirebaseStorage(item); // Now save the item
+                    });
+                } else {
+                    getActivity().runOnUiThread(() ->
+                            Toast.makeText(getContext(), "Could not find location", Toast.LENGTH_SHORT).show()
+                    );
+                }
+            } catch (IOException e) {
+                Log.e(TAG, "Geocoding error: ", e);
+            }
+        }).start();
+    }
+
+    private void setupNotificationsListener() {
+        String currentUserId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+
+        FirebaseFirestore.getInstance().collection("notifications")
+                .whereEqualTo("userId", currentUserId)
+                .orderBy("timestamp", Query.Direction.DESCENDING)
+                .addSnapshotListener((queryDocumentSnapshots, e) -> {
+                    if (e != null) {
+                        // Handle the error
+                        Log.e(TAG, "Notifications fetch failed: " + e.getMessage());
+                        return;
+                    }
+
+                    // Assuming notificationList is the data source for your adapter
+                    notificationList.clear();
+                    for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
+                        NotificationItem notification = doc.toObject(NotificationItem.class);
+                        notificationList.add(notification);
+                    }
+
+                    // Assuming notificationAdapter is your RecyclerView adapter
+                    notificationAdapter.notifyDataSetChanged();
+                });
+    }
 
 
 
 }
+

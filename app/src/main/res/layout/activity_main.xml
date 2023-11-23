@@ -5,16 +5,31 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:id="@+id/mainactivity"
     tools:context=".MainActivity">
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="?attr/colorPrimary"
+        app:popupTheme="@style/ThemeOverlay.LostFound.FullscreenContainer"
+        app:layout_constraintTop_toTopOf="parent"
+        app:titleTextColor="@color/white"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+
 
     <FrameLayout
         android:id="@+id/fragmentContainer"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
     app:layout_constraintStart_toStartOf="parent"
     app:layout_constraintEnd_toEndOf="parent"
-    app:layout_constraintTop_toTopOf="parent"
-    />
+    app:layout_constraintTop_toBottomOf="@id/toolbar"
+/>
 
     <androidx.viewpager2.widget.ViewPager2
         android:id="@+id/viewPager"
@@ -25,6 +40,36 @@
     app:layout_constraintTop_toBottomOf="@+id/fragmentContainer"
     app:layout_constraintBottom_toTopOf="@+id/tabs"
     />
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/toolbar"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:elevation="4dp">
+
+        <!-- RecyclerView for notifications -->
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerViewNotifications"
+            android:layout_width="match_parent"
+            android:layout_height="400dp"
+            android:backgroundTint="@color/light_gray"
+            android:visibility="gone" />
+
+        <Button
+            android:id="@+id/clearButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/clear"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="@id/recyclerViewNotifications"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_gravity="end|center"
+            />
+
+
+    </androidx.cardview.widget.CardView>
+
 
     <com.google.android.material.tabs.TabLayout
         android:id="@+id/tabs"
@@ -35,5 +80,12 @@
         app:layout_constraintBottom_toBottomOf="parent"
         android:contentDescription="@string/tabs_for_navigating_content"
         />
+
+
+
+    <include
+        android:id="@+id/container_my_notification"
+        layout="@layout/notification_item"
+        android:visibility="gone" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

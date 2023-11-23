@@ -1,4 +1,4 @@
-package models;
+package com.ls.lostfound.models;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,7 +15,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 import java.util.List;
-import com.ls.lostfound.PostFragment;
+
 import com.squareup.picasso.Picasso;
 
 public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ViewHolder> implements Filterable {
@@ -33,6 +33,8 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ViewHolder
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_lost_and_found, parent, false);
         return new ViewHolder(view);
+
+
 
     }
 
@@ -59,11 +61,22 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ViewHolder
         public TextView textViewItemName;
         public TextView textViewItemDescription;
         public ImageView imageViewItem;
+        public ImageView editBtn;
+        public ImageView deleteBtn;
+
         public ViewHolder(View itemView) {
             super(itemView);
             textViewItemName = itemView.findViewById(R.id.textViewItemName);
             textViewItemDescription = itemView.findViewById(R.id.textViewItemDescription);
             imageViewItem = itemView.findViewById(R.id.imageViewItem);
+            editBtn = itemView.findViewById(R.id.editButton);
+            editBtn.setVisibility(View.GONE);
+            deleteBtn = itemView.findViewById(R.id.deleteButton);
+            deleteBtn.setVisibility(View.GONE);
+
+
+
+
 
         }
     }

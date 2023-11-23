@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="24dp"
+    android:background="#FAFAFA">
+
+
+
+    <TextView
+        android:id="@+id/textViewNamePrompt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="What's your name?"
+        android:textSize="34sp"
+        android:textColor="#000"
+    android:layout_centerHorizontal="true"
+    android:layout_marginTop="120dp" />
+
+    <EditText
+        android:id="@+id/editTextFullName"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:backgroundTint="@color/light_gray"
+        android:hint="Your full name"
+        android:layout_below="@id/textViewNamePrompt"
+        android:layout_marginTop="48dp"
+        android:background="@drawable/edittext_rounded_background"
+    android:padding="12dp"
+    android:textSize="16sp"
+    android:textColorHint="#9E9E9E"
+    android:textColor="#000"
+    android:inputType="textPersonName"/>
+
+    <Button
+        android:id="@+id/buttonNameProceed"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Proceed"
+        android:layout_below="@id/editTextFullName"
+        android:layout_marginTop="24dp"
+        android:background="@drawable/button_rounded_background"
+    android:textColor="#FFF"
+    android:textSize="18sp" />
+
+    <ProgressBar
+        android:id="@+id/setupProgressBar"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:progressDrawable="@drawable/progress_bar_custom"
+    android:max="5"
+    android:progress="1"
+    android:layout_marginBottom="48dp"/>
+
+</RelativeLayout>

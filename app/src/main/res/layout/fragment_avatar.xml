@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="24dp"
+    android:background="#FAFAFA">
+
+
+    <TextView
+        android:id="@+id/textViewAvatarPrompt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Set your avatar"
+        android:textSize="34sp"
+        android:textColor="#000"
+    android:layout_centerHorizontal="true"
+    android:layout_marginTop="120dp" />
+
+    <ImageView
+        android:id="@+id/imageViewAvatar"
+        android:layout_width="120dp"
+    android:layout_height="120dp"
+    android:src="@drawable/baseline_account_circle_24"
+    android:layout_below="@id/textViewAvatarPrompt"
+    android:layout_centerHorizontal="true"
+    android:layout_marginTop="48dp"
+    android:background="@drawable/imageview_rounded_background"
+    />
+
+
+    <Button
+        android:id="@+id/buttonAvatarProceed"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Finish"
+        android:layout_below="@id/imageViewAvatar"
+        android:layout_marginTop="24dp"
+        android:background="@drawable/button_rounded_background"
+    android:textColor="#FFF"
+    android:textSize="18sp" />
+
+    <ProgressBar
+        android:id="@+id/setupProgressBar"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:progressDrawable="@drawable/progress_bar_custom"
+    android:max="5"
+    android:progress="5"
+    android:layout_marginBottom="48dp"/>
+
+</RelativeLayout>

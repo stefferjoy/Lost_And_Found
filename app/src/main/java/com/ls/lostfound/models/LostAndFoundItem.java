@@ -1,4 +1,4 @@
-package models;
+package com.ls.lostfound.models;
 
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
@@ -31,7 +31,7 @@ public class LostAndFoundItem {
 
 
 
-    public LostAndFoundItem(String userId, String userName, String itemName, String description, String location, String date, String localImagePath, String firebaseImageUrl) {
+    public LostAndFoundItem(String userId, String userName, String itemName, String description, String location, String date, String localImagePath, String firebaseImageUrl,double latitude, double longitude) {
 
         this.documentId = documentId;
         this.userId = userId;
@@ -42,6 +42,8 @@ public class LostAndFoundItem {
         this.date = date;
         this.localImagePath = localImagePath;
         this.firebaseImageUrl = firebaseImageUrl;
+        this.latitude = latitude;
+        this.longitude = longitude;
     }
 
     // Getters and setters for the model properties
@@ -167,16 +169,5 @@ public class LostAndFoundItem {
         }
     }
 
-
-    public void saveItem(FirebaseFirestore db) {
-        db.collection("lost_and_found_items").add(this)
-                .addOnSuccessListener(documentReference -> {
-                    // Here we capture and save the Firestore generated documentId
-                    this.documentId = documentReference.getId();
-                })
-                .addOnFailureListener(e -> {
-                    // Handle the error
-                });
-    }
 
 }

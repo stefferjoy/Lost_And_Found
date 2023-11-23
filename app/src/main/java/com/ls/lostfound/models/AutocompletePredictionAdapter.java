@@ -1,4 +1,4 @@
-package models;
+package com.ls.lostfound.models;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -79,9 +79,10 @@ public class AutocompletePredictionAdapter extends RecyclerView.Adapter<Autocomp
         notifyDataSetChanged();
     }
     public void clearPredictions() {
-        predictionList.clear();
-        notifyDataSetChanged();
+        predictionList.clear(); // Assuming predictionList is your data set in the adapter
+        notifyDataSetChanged(); // Notify the adapter to refresh the list
     }
+
 
 
 

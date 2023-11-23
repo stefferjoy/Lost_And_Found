@@ -1,235 +1,259 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/backgroundcolor"
-    tools:context=".myAccount.MyProfileFragment">
+    android:id="@+id/container_my_profile"
+    android:background="@color/white"
+    android:name=".myAccount.MyProfileFragment">
 
-    <!-- Profile Image Section -->
-    <LinearLayout
-        android:id="@+id/profile_image_section"
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
-        android:gravity="center_horizontal"
-        android:orientation="vertical">
-
-        <de.hdodenhof.circleimageview.CircleImageView
-            android:id="@+id/profile_image"
-            android:layout_width="120dp"
-            android:layout_height="120dp"
-            android:src="@drawable/account_icon"
-            app:civ_border_width="2dp"
-            app:civ_border_color="@color/white"/>
-
-
-        <ImageView
-            android:id="@+id/edit_image_icon"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="-30dp"
-            android:layout_gravity="center"
-            android:padding="5dp"
-            android:background="@drawable/gray_round_icon_background"
-            android:src="@drawable/outline_photo_camera_black_18"
-
-            android:contentDescription="@string/edit_profile_picture"/>
-    </LinearLayout>
-
-    <!-- User Information CardView -->
-    <androidx.cardview.widget.CardView
-        android:id="@+id/card_view_profile"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/profile_image_section"
-        app:cardCornerRadius="16dp"
-        app:cardElevation="6dp"
-        android:layout_marginLeft="16dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginRight="16dp"
-        android:layout_marginBottom="8dp">
-
+        android:layout_height="match_parent">
+        <!-- Profile Image Section -->
         <LinearLayout
+            android:id="@+id/profile_image_section"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:padding="24dp"
-            >
+            android:layout_marginTop="24dp"
+            android:gravity="center_horizontal"
+            android:orientation="vertical">
 
-            <!-- User Information TextViews -->
-            <!-- Name -->
-            <TextView
-                android:id="@+id/name_text"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Name"
-                android:textSize="10sp"
-                android:textAppearance="?attr/textAppearanceListItem"/>
-            <TextView
-                android:id="@+id/name_text_view"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text=""
-                android:paddingBottom="25dp"
-                android:textAppearance="?attr/textAppearanceListItem"/>
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/profile_image"
+                android:layout_width="120dp"
+                android:layout_height="120dp"
+                android:src="@drawable/baseline_account_circle_gray_24"
+                app:civ_border_width="2dp"
+                app:civ_border_color="@color/white"/>
 
 
-            <TextView
-                android:id="@+id/username_text"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Username"
-                android:textSize="10sp"
-                android:textAppearance="?attr/textAppearanceListItem"/>
-            <!-- Username -->
-
-            <TextView
-                android:id="@+id/textViewUserName"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:paddingBottom="25dp"
-                android:textAppearance="?attr/textAppearanceListItem"
-                />
-
-
-
-            <TextView
-                android:id="@+id/phone_text"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Phone Number"
-                android:textSize="10sp"
-                android:textAppearance="?attr/textAppearanceListItem"/>
-
-            <!-- Phone -->
-            <TextView
-                android:id="@+id/phone_text_view"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text=""
-                android:paddingBottom="25dp"
-                android:textAppearance="?attr/textAppearanceListItem"/>
-
-
-            <TextView
-                android:id="@+id/add_text"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Address"
-                android:textSize="10sp"
-                android:textAppearance="?attr/textAppearanceListItem"/>
-            <!-- Address -->
-            <TextView
-                android:id="@+id/address_text_view"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:paddingBottom="25dp"
-                android:text=""
-                android:textAppearance="?attr/textAppearanceListItem"/>
-
-        </LinearLayout>
-        <ImageButton
-            android:id="@+id/edit_details_button"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:layout_gravity="bottom|end"
-            android:background="@drawable/round_icon_background"
-            android:padding="12dp"
-            android:elevation="4dp"
-            android:src="@drawable/outline_edit_black_24"
-            android:scaleType="centerInside"
-            android:layout_marginBottom="5dp"
-            android:layout_marginRight="5dp"
-            />
-
-
-    </androidx.cardview.widget.CardView>
-
-    <!-- Account Information CardView -->
-    <androidx.cardview.widget.CardView
-        android:id="@+id/card_view_profile2"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/card_view_profile"
-        app:cardCornerRadius="16dp"
-        app:cardElevation="6dp"
-        android:layout_marginLeft="16dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginRight="16dp"
-        android:layout_marginBottom="16dp">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:padding="24dp">
-
-
-            <TextView
-                android:id="@+id/email_text"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="E-mail ID"
-                android:textSize="10sp"
-                android:textAppearance="?attr/textAppearanceListItem"/>
-                <!-- Email -->
-            <TextView
-                android:id="@+id/user_details"
+            <ImageButton
+                android:id="@+id/edit_image_icon"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:paddingBottom="25dp"
-                android:textAppearance="?attr/textAppearanceListItem"
-                />
+                android:layout_marginTop="-30dp"
+                android:layout_gravity="center"
+                android:padding="5dp"
+                android:background="@drawable/gray_round_icon_background"
+                android:src="@drawable/outline_photo_camera_black_18"
 
+                android:contentDescription="@string/edit_profile_picture"/>
+        </LinearLayout>
 
+        <!-- User Information CardView -->
+        <androidx.cardview.widget.CardView
+            android:id="@+id/card_view_profile"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/profile_image_section"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="6dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginRight="16dp"
+            android:layout_marginBottom="8dp">
 
-            <!-- Password with change button -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                android:padding="24dp"
+                >
+
+                <!-- User Information TextViews -->
+                <!-- Name -->
                 <TextView
-                    android:id="@+id/pass_text"
+                    android:id="@+id/name_text"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Password"
-                    android:textSize="10sp"
+                    android:text="@string/name"
+                    android:textSize="11sp"
                     android:textAppearance="?attr/textAppearanceListItem"/>
 
-
-                <RelativeLayout
+                <TextView
+                    android:id="@+id/name_text_view"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent">
+                    android:layout_height="48dp"
+                    android:inputType="text|textPersonName"
+                    android:paddingBottom="25dp"
+                    android:textAppearance="?attr/textAppearanceListItem" />
 
+
+                <TextView
+                    android:id="@+id/dob_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Date Of Birth"
+                    android:textSize="11sp"
+                    android:textAppearance="?attr/textAppearanceListItem"/>
+
+                <TextView
+                    android:id="@+id/textViewdateOfBirth"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingBottom="25dp"
+                    android:textAppearance="?attr/textAppearanceListItem"
+                    />
+
+
+                <TextView
+                    android:id="@+id/phone_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/phone_number"
+                    android:textSize="11sp"
+                    android:textAppearance="?attr/textAppearanceListItem"/>
+
+                <!-- Phone -->
+                <TextView
+                    android:id="@+id/phone_text_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:inputType="number"
+                    android:paddingBottom="25dp"
+                    android:textAppearance="?attr/textAppearanceListItem" />
+
+
+                <TextView
+                    android:id="@+id/add_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Address"
+                    android:textSize="11sp"
+                    android:textAppearance="?attr/textAppearanceListItem"/>
+                <!-- Address -->
+                <TextView
+                    android:id="@+id/address_text_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingBottom="25dp"
+                    android:textAppearance="?attr/textAppearanceListItem" />
+
+            </LinearLayout>
+            <ImageButton
+                android:id="@+id/edit_details_button"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_gravity="bottom|end"
+                android:background="@drawable/round_icon_background"
+                android:padding="12dp"
+                android:elevation="4dp"
+                android:src="@drawable/outline_edit_black_24"
+                android:scaleType="centerInside"
+                android:layout_marginBottom="5dp"
+                android:layout_marginRight="5dp"
+                android:contentDescription="Edit Details"
+                />
+
+
+        </androidx.cardview.widget.CardView>
+
+        <!-- Account Information CardView -->
+        <androidx.cardview.widget.CardView
+            android:id="@+id/card_view_profile2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/card_view_profile"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="6dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginRight="16dp"
+            android:layout_marginBottom="16dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="24dp">
+
+
+                <TextView
+                    android:id="@+id/username_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/username"
+                    android:textSize="11sp"
+                    android:textAppearance="?attr/textAppearanceListItem"/>
+                <!-- Username -->
+
+                <TextView
+                    android:id="@+id/textViewUserName"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingBottom="25dp"
+                    android:textAppearance="?attr/textAppearanceListItem"
+                    />
+
+
+                <TextView
+                    android:id="@+id/email_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/e_mail_id"
+                    android:textSize="11sp"
+                    android:textAppearance="?attr/textAppearanceListItem"/>
+                <!-- Email -->
+                <TextView
+                    android:id="@+id/user_details"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingBottom="25dp"
+                    android:textAppearance="?attr/textAppearanceListItem"
+                    />
+
+
+
+                <!-- Password with change button -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
                     <TextView
-                        android:id="@+id/password_text_view"
-                        android:layout_width="wrap_content"
+                        android:id="@+id/pass_text"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_alignParentStart="true"
-                        android:textAlignment="textEnd"
-                        android:text="**********"
-                        android:paddingBottom="25dp"
+                        android:text="@string/password_acc"
+                        android:textSize="11sp"
                         android:textAppearance="?attr/textAppearanceListItem"/>
 
-                    <Button
-                        android:id="@+id/change_password_button"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentEnd="true"
-                        android:backgroundTint="@color/bluebutton"
-                        android:text="Change"/>
 
-                </RelativeLayout>
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent">
+
+                        <TextView
+                            android:id="@+id/password_text_view"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentStart="true"
+                            android:text="@string/pass_symbol"
+                            android:textSize="28sp"
+                            android:paddingBottom="25dp"
+                            android:textAppearance="?attr/textAppearanceListItem"/>
+
+                        <Button
+                            android:id="@+id/change_password_button"
+                            android:layout_width="wrap_content"
+                            android:layout_height="48dp"
+                            android:layout_alignParentEnd="true"
+                            android:backgroundTint="@color/bluebutton"
+                            android:text="@string/change"/>
+
+                    </RelativeLayout>
+
+
+                </LinearLayout>
+
 
 
             </LinearLayout>
 
+        </androidx.cardview.widget.CardView>
 
+    </RelativeLayout>
 
-        </LinearLayout>
-
-    </androidx.cardview.widget.CardView>
-</RelativeLayout>
+</FrameLayout>
 
 

@@ -35,4 +35,20 @@
     <string name="enter_old_password">Enter Old password</string>
     <string name="create_new_password_text">Create New Password</string>
     <string name="save">Save</string>
+    <string name="phone_number">Phone Number</string>
+    <string name="username">Username</string>
+    <string name="name">Name</string>
+    <string name="e_mail_id">E-mail ID</string>
+    <string name="password_acc">Password</string>
+    <string name="change">Change</string>
+    <string name="pass_symbol">**********</string>
+    <string name="proceed">Proceed</string>
+    <string name="message_last_page"><![CDATA[You\'re ready to use Lost&Found!]]></string>
+    <string name="google_sign_in">Google Sign In\n</string>
+    <string name="default_web_client_id">654681759634-d9farkpseie4aka2nes4tsboijc15pl8.apps.googleusercontent.com</string>
+    <string name="clear">clear</string>
+    <string name="notifications">notifications</string>
+    <string name="channel_name">Lost and Found Alerts</string>
+    <string name="channel_description">Notifications for new lost and found items</string>
+
 </resources>

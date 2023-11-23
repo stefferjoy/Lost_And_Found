@@ -1,4 +1,4 @@
-package models;
+package com.ls.lostfound.models;
 
 import android.content.Context;
 import android.util.Log;
@@ -7,12 +7,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.firebase.firestore.FirebaseFirestore;
 import com.ls.lostfound.R;
 import com.squareup.picasso.Picasso;
 
@@ -25,6 +23,29 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemViewHolder
 
     private OnEditListener onEditListener;
     private OnDeleteListener onDeleteListener;
+
+    private static OnItemClickListener listener;
+
+
+    public void setOnItemClickListener(OnItemClickListener listener) {
+        this.listener = listener;
+    }
+    public interface OnItemClickListener {
+        void onItemClick(int position);
+    }
+
+
+
+    public interface OnPostClickListener {
+        void onPostClick(int position);
+    }
+
+    private OnPostClickListener onPostClickListener;
+
+    public void setOnPostClickListener(OnPostClickListener listener) {
+        this.onPostClickListener = listener;
+    }
+
 
     public ItemAdapter(List<LostAndFoundItem> itemList, Context context, boolean isMyPosts,
                        OnEditListener onEditListener, OnDeleteListener onDeleteListener) {
@@ -73,8 +94,6 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemViewHolder
 
 
 
-
-
         // Set visibility and click listeners for edit and delete buttons
         if (isMyPosts == true) {
             holder.editButton.setVisibility(View.VISIBLE);
@@ -101,6 +120,16 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemViewHolder
         holder.textViewLocation.setText(currentItem.getLocation());
         holder.textViewDate.setText(currentItem.getDate());
         holder.textViewUserName.setText("User Name: " + currentItem.getUserName());
+
+        // Set an OnClickListener on the item view
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (onPostClickListener != null) {
+                    onPostClickListener.onPostClick(position);
+                }
+            }
+        });
     }
 
     @Override
@@ -122,8 +151,17 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemViewHolder
             imageViewItem = itemView.findViewById(R.id.imageViewItem);
             editButton = itemView.findViewById(R.id.editButton);
             deleteButton = itemView.findViewById(R.id.deleteButton);
+            itemView.setOnClickListener(v -> {
+                int position = getAdapterPosition();
+                if (position != RecyclerView.NO_POSITION && listener != null) {
+                    listener.onItemClick(position);
+                }
+            });
         }
+
     }
+
+
 
 
     // Interfaces for the listeners
