@@ -2,7 +2,9 @@ package com.ls.lostfound;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
@@ -13,6 +15,7 @@ import androidx.viewpager2.widget.ViewPager2;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -49,6 +52,7 @@ import java.util.List;
 import java.util.Map;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import android.Manifest;
 
 
 public class MainActivity extends AppCompatActivity implements PostFragment.OnNewPostListener,ViewPagerSwipeListener {
@@ -61,6 +65,8 @@ public class MainActivity extends AppCompatActivity implements PostFragment.OnNe
     private NotificationAdapter notificationAdapter;
     private List<NotificationItem> notificationList;
     private ListenerRegistration notificationListenerRegistration;
+    private static final int PERMISSIONS_REQUEST_CODE = 100;
+
 
 
 
@@ -120,6 +126,9 @@ public class MainActivity extends AppCompatActivity implements PostFragment.OnNe
 
         // Set up the notification listener
         setupNotificationsListener();
+        // Check and request permissions
+        checkAndRequestPermissions();
+
 
 
         new TabLayoutMediator(tabLayout, viewPager, (tab, position) -> {
@@ -276,6 +285,35 @@ public class MainActivity extends AppCompatActivity implements PostFragment.OnNe
         notificationAdapter.notifyDataSetChanged(); // Notify the adapter of data changes
     }
 
+    private void checkAndRequestPermissions() {
+        List<String> permissionsNeeded = new ArrayList<>();
+
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+            permissionsNeeded.add(Manifest.permission.CAMERA);
+        }
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            permissionsNeeded.add(Manifest.permission.WRITE_EXTERNAL_STORAGE);
+        }
+        // Add other permissions as needed
+
+        if (!permissionsNeeded.isEmpty()) {
+            ActivityCompat.requestPermissions(this, permissionsNeeded.toArray(new String[0]), PERMISSIONS_REQUEST_CODE);
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == PERMISSIONS_REQUEST_CODE) {
+            for (int i = 0; i < permissions.length; i++) {
+                if (grantResults[i] != PackageManager.PERMISSION_GRANTED) {
+                    // Permission was denied. You can show a message explaining why the permission is needed.
+                    return;
+                }
+            }
+            // Permissions have been granted. You can now proceed with your app functionality.
+        }
+    }
 
 
 
