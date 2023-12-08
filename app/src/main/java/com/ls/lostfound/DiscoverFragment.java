@@ -75,6 +75,7 @@ public class DiscoverFragment extends Fragment implements ItemAdapter.OnDeleteLi
     private boolean isMapVisible = false;
     private DiscoverFragment discoverFragment;
 
+    private RecyclerView messageRecyclerView ;
 
     private Context context;
     private MessageAdapter messageAdapter;
@@ -137,6 +138,8 @@ public class DiscoverFragment extends Fragment implements ItemAdapter.OnDeleteLi
 
 
         recyclerView = view.findViewById(R.id.recyclerView);
+
+
         swipeRefreshLayout = view.findViewById(R.id.swipeRefreshLayout);
 
         searchEditText = view.findViewById(R.id.editTextSearch); // Use the class member variable
@@ -147,6 +150,7 @@ public class DiscoverFragment extends Fragment implements ItemAdapter.OnDeleteLi
         messageAdapter = new MessageAdapter(messages);
 
         recyclerView.setAdapter(messageAdapter);
+
 
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
@@ -185,7 +189,6 @@ public class DiscoverFragment extends Fragment implements ItemAdapter.OnDeleteLi
 
 
 
-
         chatButton.setOnClickListener(v -> {
             if (!itemList.isEmpty()) {
                 LostAndFoundItem firstItem = itemList.get(0);
@@ -201,7 +204,8 @@ public class DiscoverFragment extends Fragment implements ItemAdapter.OnDeleteLi
                 Log.d(TAG, "Item list is empty, cannot start chat.");
             }
         });
-/*
+
+        /*
         // Set the onItemClickListener for your ItemAdapter
         adapter.setOnItemClickListener(new ItemAdapter.OnItemClickListener() {
             @Override
@@ -278,8 +282,9 @@ public class DiscoverFragment extends Fragment implements ItemAdapter.OnDeleteLi
     }
 
 
+
     @Override
-    public void onMapReady(GoogleMap googleMap) {
+    public void onMapReady(@NonNull GoogleMap googleMap) {
         for (LostAndFoundItem item : listOfItems) {
             LatLng itemLocation = new LatLng(item.getLatitude(), item.getLongitude());
             googleMap.addMarker(new MarkerOptions().position(itemLocation).title(item.getItemName()));
@@ -315,9 +320,7 @@ public class DiscoverFragment extends Fragment implements ItemAdapter.OnDeleteLi
         if (discoverFragment != null) {
             discoverFragment.onStop();
         }
-       // if (notificationListenerRegistration != null) {
-       //     notificationListenerRegistration.remove();
-       // }
+
     }
 
     @Override
@@ -327,7 +330,6 @@ public class DiscoverFragment extends Fragment implements ItemAdapter.OnDeleteLi
         if (discoverFragment != null) {
             discoverFragment.onResume();
         }
-        //setupNotificationsListener();
     }
     @Override
     public void onPause() {

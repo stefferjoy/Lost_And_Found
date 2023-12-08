@@ -54,6 +54,7 @@ public class Login extends AppCompatActivity {
             startActivity(intent);
             finish();
         }
+
     }
 
     @Override
@@ -135,7 +136,7 @@ public class Login extends AppCompatActivity {
 
 
     }
-   
+
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -163,8 +164,10 @@ public class Login extends AppCompatActivity {
                             // Sign-in success, update UI with the signed-in user's information
                             Log.d(TAG, "signInWithCredential:success");
                             FirebaseUser user = mAuth.getCurrentUser();
-                            // Update UI
-                        } else {
+                            // Navigate to MainActivity
+                            Intent intent = new Intent(Login.this, MainActivity.class);
+                            startActivity(intent);
+                            finish(); // Finish the current activity                        } else {
                             // If sign-in fails, display a message to the user.
                             Log.w(TAG, "signInWithCredential:failure", task.getException());
                             // Update UI

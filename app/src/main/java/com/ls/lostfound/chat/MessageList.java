@@ -4,6 +4,7 @@ import java.util.List;
 
 // Create a separate class to hold a list of messages
 public class MessageList {
+    /*
     private List<Message> messages;
 
     public MessageList() {
@@ -21,4 +22,6 @@ public class MessageList {
     public void setMessages(List<Message> messages) {
         this.messages = messages;
     }
+
+     */
 }

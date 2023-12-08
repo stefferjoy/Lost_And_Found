@@ -28,13 +28,12 @@
         app:boxCornerRadiusTopEnd="20dp"
         app:boxCornerRadiusTopStart="20dp"
         app:boxBackgroundColor="@color/boxcolor"
-        android:padding="5dp"
         android:layout_marginTop="20dp">
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/email"
             android:hint="@string/email"
             android:fontFamily="@font/montserrat_light"
-            android:layout_width="380dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"/>
     </com.google.android.material.textfield.TextInputLayout>
@@ -47,7 +46,7 @@
         app:boxCornerRadiusTopEnd="20dp"
         app:boxCornerRadiusTopStart="20dp"
         app:boxBackgroundColor="@color/boxcolor"
-        android:padding="5dp"
+        android:padding="1dp"
 
         android:layout_marginTop="20dp">
         <com.google.android.material.textfield.TextInputEditText
@@ -55,7 +54,7 @@
             android:hint="@string/password"
             android:inputType="textPassword"
             android:fontFamily="@font/montserrat_light"
-            android:layout_width="380dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             />
@@ -70,15 +69,13 @@
         app:boxCornerRadiusTopEnd="20dp"
         app:boxCornerRadiusTopStart="20dp"
         app:boxBackgroundColor="@color/boxcolor"
-        android:padding="5dp"
-
         android:layout_marginTop="20dp">
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/confirm_pass"
             android:hint="@string/confirm_password"
             android:inputType="textPassword"
             android:fontFamily="@font/montserrat_light"
-            android:layout_width="380dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             />

@@ -213,17 +213,6 @@ public class MainActivity extends AppCompatActivity implements PostFragment.OnNe
     private void toggleNotificationPanel() {
         Log.d(TAG, "Toggling notification panel");
 
-        /*
-        if (recyclerViewNotifications.getVisibility() == View.GONE) {
-            recyclerViewNotifications.setVisibility(View.VISIBLE);
-            // Optional: Scroll to the top of the list when showing notifications
-            recyclerViewNotifications.scrollToPosition(0);
-        } else {
-            recyclerViewNotifications.setVisibility(View.GONE);
-        }
-
-         */
-
         Button clearButton = findViewById(R.id.clearButton);
 
         // Toggle visibility

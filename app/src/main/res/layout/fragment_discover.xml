@@ -58,6 +58,13 @@
             android:visibility="gone" /> <!-- Initially hidden -->
     </FrameLayout>
 
+    <androidx.recyclerview.widget.RecyclerView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/chatButton"
+        android:id="@+id/messageRecyclerView"
+        android:backgroundTint="@color/backgroundcolor"
+        />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/chatButton"
@@ -67,7 +74,8 @@
         android:layout_marginStart="@dimen/fab_margin"
         android:layout_marginTop="@dimen/fab_margin"
         android:layout_marginEnd="@dimen/fab_margin"
-        android:layout_marginBottom="@dimen/fab_margin"        android:background="@drawable/baseline_chat_bubble_24"
+        android:layout_marginBottom="@dimen/fab_margin"
+        android:background="@drawable/baseline_chat_bubble_24"
         android:textColor="#FFFFFF"
         android:textSize="16sp"
         android:paddingStart="16dp"

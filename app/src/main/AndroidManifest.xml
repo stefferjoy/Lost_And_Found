@@ -38,10 +38,10 @@
         </activity>
         <activity
             android:name=".userdetails.Register"
-            android:exported="true"></activity>
+            android:exported="true" />
         <activity
             android:name=".userdetails.Login"
-            android:exported="true"></activity>
+            android:exported="true" />
         <activity
             android:name=".MainActivity"
             android:exported="true"

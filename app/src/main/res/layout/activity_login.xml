@@ -51,8 +51,6 @@
         android:layout_marginTop="20dp"
         android:padding="5dp"
 
-
-
         >
 
         <com.google.android.material.textfield.TextInputEditText

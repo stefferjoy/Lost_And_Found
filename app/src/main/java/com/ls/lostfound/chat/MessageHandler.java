@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.List;
 
 public class MessageHandler {
+    /*
     private List<Message> messages;
 
     public MessageHandler() {
@@ -35,7 +36,7 @@ public class MessageHandler {
         return null;
     }
 
-/*
+
     // Method to fetch messages from a source (e.g., database or API)
     public void fetchMessages() {
         // In this example, we'll simulate fetching messages from a source
@@ -57,5 +58,6 @@ public class MessageHandler {
     }
 
  */
+
 
 }
